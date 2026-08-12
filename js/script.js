@@ -275,3 +275,50 @@
     }
   });
 }());
+
+/* Tablet primary navigation. The desktop links remain the source of truth;
+   this controller only changes how that same menu is exposed below the
+   content-driven tablet breakpoint. */
+(function () {
+  'use strict';
+
+  var nav = document.querySelector('.nav');
+  var toggle = document.querySelector('.nav__toggle');
+  var menu = document.getElementById('primary-menu');
+  if (!nav || !toggle || !menu) return;
+
+  var responsiveMenu = window.matchMedia('(max-width: 1080px)');
+
+  function setMenu(open, restoreFocus) {
+    menu.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    if (!open && restoreFocus) toggle.focus();
+  }
+
+  toggle.addEventListener('click', function () {
+    setMenu(toggle.getAttribute('aria-expanded') !== 'true', false);
+  });
+
+  menu.addEventListener('click', function (event) {
+    if (event.target.closest('a')) setMenu(false, false);
+  });
+
+  document.addEventListener('pointerdown', function (event) {
+    if (responsiveMenu.matches && !nav.contains(event.target)) setMenu(false, false);
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setMenu(false, true);
+    }
+  });
+
+  function syncNavigation() {
+    if (!responsiveMenu.matches) setMenu(false, false);
+  }
+
+  if (responsiveMenu.addEventListener) responsiveMenu.addEventListener('change', syncNavigation);
+  else responsiveMenu.addListener(syncNavigation);
+  syncNavigation();
+}());

@@ -18,7 +18,10 @@
 
     <div class="hero__media">
       <div class="hero__zoom">
-        <img class="hero__photo" src="assets/images/hero-sunflower-field.png" alt="" aria-hidden="true">
+        <video class="hero__video" autoplay muted loop playsinline preload="metadata"
+               poster="assets/images/hero-sunflower-field.png" aria-hidden="true" tabindex="-1">
+          <source src="assets/videos/sunflower-field.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="hero__scrim"></div>
 
@@ -28,14 +31,21 @@
           <span class="brand__name">Atlas</span>
         </a>
 
-        <nav class="nav__menu" aria-label="Primary">
+        <nav class="nav__menu" id="primary-menu" aria-label="Primary">
           <a class="pill nav__link" href="#">Platform</a>
           <a class="pill nav__link" href="#">Use Cases</a>
           <a class="pill nav__link" href="#">Country</a>
           <a class="pill nav__link" href="#">Pricing</a>
+          <a class="pill pill--light nav__cta nav__cta--menu" href="#">Request Demo</a>
         </nav>
 
         <a class="pill pill--light nav__cta" href="#">Request Demo</a>
+
+        <button class="nav__toggle" type="button" aria-controls="primary-menu"
+                aria-expanded="false" aria-label="Open navigation menu">
+          <span></span>
+          <span></span>
+        </button>
       </header>
 
       <!-- Talent search panel -->
@@ -147,20 +157,9 @@
 
   <!-- ========================== FEATURES ========================== -->
   <section class="features">
-    <h2 class="features__title">Your compliant global workspace</h2>
-
-    <div class="features__aside">
-      <div class="avatar-stack avatar-stack--sm" aria-hidden="true">
-        <img class="avatar avatar--ring" src="assets/images/avatar-ivan.jpg" alt="">
-        <img class="avatar avatar--ring" src="assets/images/avatar-david.jpg" alt="">
-        <img class="avatar avatar--ring" src="assets/images/avatar-jennifer.jpg" alt="">
-        <img class="avatar avatar--ring" src="assets/images/avatar-fourth.jpg" alt="">
-      </div>
-      <p class="features__lede">Discover,&nbsp;onboard,&nbsp;and pay compliant remote teams in over 150 countries.</p>
-    </div>
-
-    <!-- Card 1 — Global Payroll Setup -->
-    <article class="feature feature--payroll">
+    <div class="features__row features__row--top">
+      <!-- Card 1 — Global Payroll Setup -->
+      <article class="feature feature--payroll">
       <div class="feature__media">
         <img class="crop crop--payroll" src="assets/images/sunflower-portrait.png" alt="" aria-hidden="true">
 
@@ -195,10 +194,10 @@
       </div>
       <h3 class="feature__title">Global Payroll Setup</h3>
       <p class="feature__text">Automatic,&nbsp;mult-currency payments made easy</p>
-    </article>
+      </article>
 
-    <!-- Card 2 — Instant Onboarding -->
-    <article class="feature feature--onboarding">
+      <!-- Card 2 — Instant Onboarding -->
+      <article class="feature feature--onboarding">
       <div class="feature__media">
         <img class="crop crop--onboarding" src="assets/images/sunflower-portrait.png" alt="" aria-hidden="true">
 
@@ -219,10 +218,12 @@
       </div>
       <h3 class="feature__title">Instant Onboarding</h3>
       <p class="feature__text">Legal-verified templates to hire in 24 hours</p>
-    </article>
+      </article>
+    </div>
 
-    <!-- Card 3 — Offer competitive benefits -->
-    <article class="feature feature--benefits">
+    <div class="features__row features__row--bottom">
+      <!-- Card 3 — Offer competitive benefits -->
+      <article class="feature feature--benefits">
       <div class="feature__media">
         <img class="crop crop--cover" src="assets/images/sunflower-dusk.png" alt="" aria-hidden="true">
 
@@ -248,10 +249,10 @@
       </div>
       <h3 class="feature__title">Offer competitive benefits</h3>
       <p class="feature__text">Provide pensions and retirement plans. Stand out and attract the best talent.&nbsp;</p>
-    </article>
+      </article>
 
-    <!-- Card 4 — Access locally-based HR experts -->
-    <article class="feature feature--experts">
+      <!-- Card 4 — Access locally-based HR experts -->
+      <article class="feature feature--experts">
       <div class="feature__media">
         <img class="crop crop--cover" src="assets/images/sunflower-clouds.png" alt="" aria-hidden="true">
 
@@ -270,7 +271,8 @@
       </div>
       <h3 class="feature__title">Access locally-based HR experts</h3>
       <p class="feature__text">Get done-for-you employee lifecycle management</p>
-    </article>
+      </article>
+    </div>
   </section>
 
   <!-- ========================== SHOWCASE ========================== -->
