@@ -48,7 +48,8 @@
      scale, so these are the only raw numbers that carry meaning. */
   --gutter: 20px;           /* breathing space either side of the page      */
   --design-w: 1685;         /* page width of the Figma frame                */
-  --media-inset: 10;        /* gutter between the page edge and the media   */
+  --section-inset: 10;      /* shared inset for full-width page sections   */
+  --section-gap: 150;       /* shared vertical rhythm between sections     */
   --media-h: 737;           /* media height at design scale                 */
   --hero-chrome: 336;       /* the hero minus the media: 11 above the media,
                                71 below it, a 180 tall text block and 74 of
@@ -245,7 +246,7 @@ input { font: inherit; color: inherit; }
   position: relative;
   flex: 1 1 auto;
   min-height: calc(var(--media-min) * var(--k));
-  margin-inline: calc(var(--media-inset) * var(--k));
+  margin-inline: calc(var(--section-inset) * var(--page-scale));
   border-radius: calc(var(--radius-media) * var(--k));
   overflow: hidden;
   background: var(--ink);
@@ -269,23 +270,16 @@ input { font: inherit; color: inherit; }
   to   { transform: scale(1.238); }
 }
 
-/* Figma "Rectangle 5396": the photograph is laid in at 1717 x 3656.161 over
-   a 1665 x 737 media box, offset so the 43.01%–67.82% band of the picture is
-   what shows. Expressed against the media box those numbers become ratios,
-   which hold that exact crop at the design's proportions and keep covering
-   the box as the media grows taller or wider.
-
-     width  1717    / 1665  = 103.1231%   (and so left = -26 / 1665)
-     the picture's 55.41% mark sits on the media's centre line */
-.hero__photo {
+/* The portrait video fills the media frame while the existing zoom wrapper
+   supplies the original slow push-in treatment. */
+.hero__video {
   position: absolute;
-  left: -1.5615%;
-  top: 50%;
-  width: 103.1231%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  height: auto;
-  aspect-ratio: 1717 / 3656.161;
-  transform: translateY(-55.4132%);
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero__scrim {
@@ -350,6 +344,9 @@ input { font: inherit; color: inherit; }
 .nav__link:nth-child(4) { width: calc(85 * var(--k)); }
 
 .nav__cta { width: calc(140 * var(--k)); }
+
+.nav__cta--menu,
+.nav__toggle { display: none; }
 
 .nav__link:hover { background: rgba(0, 0, 0, 0.22); }
 .nav__cta:hover { background: rgba(255, 255, 255, 0.86); }
@@ -768,64 +765,47 @@ input { font: inherit; color: inherit; }
    FEATURES  (Figma frame "Dribbble shot HD - 134", left artboard, x 1.420143)
    ========================================================================== */
 .features {
-  position: relative;
-  height: calc(2033.12 * var(--k));
+  display: grid;
+  row-gap: calc(70 * var(--k));
+  padding-top: calc(var(--section-gap) * var(--page-scale));
+  padding-inline: calc(var(--section-inset) * var(--page-scale));
+  padding-bottom: calc(70 * var(--k));
 }
 
-.features__title {
-  position: absolute;
-  left: calc(70.27 * var(--k));
-  top: calc(240.49 * var(--k));
-  width: calc(733.19 * var(--k));
-  margin: 0;
-  font-size: calc(96.85 * var(--k));
-  font-weight: 500;
-  line-height: 0.9;
-  letter-spacing: var(--track-display);
+.features__row {
+  display: grid;
+  min-width: 0;
 }
 
-.features__aside {
-  position: absolute;
-  left: calc(1189.9 * var(--k));
-  top: calc(256.95 * var(--k));
+.features__row--top {
+  grid-template-columns: minmax(0, 1060.28fr) minmax(0, 457.29fr);
+  column-gap: calc(25.44 * var(--k));
 }
 
-.avatar-stack--sm { height: calc(54.24 * var(--k)); }
-
-.avatar-stack--sm .avatar {
-  width: calc(54.24 * var(--k));
-  height: calc(54.24 * var(--k));
-  border-width: calc(2.906 * var(--k));
-}
-
-.avatar-stack--sm .avatar:nth-child(2) { left: calc(46.48 * var(--k)); }
-.avatar-stack--sm .avatar:nth-child(3) { left: calc(92.01 * var(--k)); }
-.avatar-stack--sm .avatar:nth-child(4) { left: calc(138.5 * var(--k)); }
-
-.features__lede {
-  width: calc(423.24 * var(--k));
-  margin: calc(41.64 * var(--k)) 0 0;   /* 352.83 - (256.95 + 54.24) */
-  font-size: calc(24.21 * var(--k));
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: var(--track-display);
+.features__row--bottom {
+  grid-template-columns: minmax(0, 774.44fr) minmax(0, 738.47fr);
+  column-gap: calc(30.06 * var(--k));
 }
 
 /* ---------------------------------------------------------- bento cards -- */
+.feature { min-width: 0; }
+
 .feature__media {
-  position: absolute;
+  position: relative;
+  width: 100%;
+  height: calc(577.97 * var(--k));
   border-radius: calc(var(--radius-card) * var(--k));
   overflow: hidden;
 }
 
 .feature__title,
 .feature__text {
-  position: absolute;
-  margin: 0;
+  margin-inline: 0;
   white-space: nowrap;
 }
 
 .feature__title {
+  margin-block: calc(39 * var(--k)) 0;
   font-size: calc(37.48 * var(--k));
   font-weight: 500;
   line-height: 0.9;
@@ -833,63 +813,13 @@ input { font: inherit; color: inherit; }
 }
 
 .feature__text {
+  margin-block: calc(17 * var(--k)) 0;
   font-size: calc(21.1 * var(--k));
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: var(--track-tight);
   opacity: 0.6;
 }
-
-.feature--payroll .feature__media {
-  left: calc(70.27 * var(--k));
-  top: calc(510.79 * var(--k));
-  width: calc(1060.28 * var(--k));
-  height: calc(577.77 * var(--k));
-}
-
-.feature--onboarding .feature__media {
-  left: calc(1155.99 * var(--k));
-  top: calc(511.25 * var(--k));
-  width: calc(457.29 * var(--k));
-  height: calc(577.97 * var(--k));
-}
-
-.feature--benefits .feature__media {
-  left: calc(70.27 * var(--k));
-  top: calc(1271.31 * var(--k));
-  width: calc(774.44 * var(--k));
-  height: calc(577.77 * var(--k));
-}
-
-.feature--experts .feature__media {
-  left: calc(874.51 * var(--k));
-  top: calc(1270.85 * var(--k));
-  width: calc(738.47 * var(--k));
-  height: calc(577.97 * var(--k));
-}
-
-.feature--payroll .feature__title,
-.feature--benefits .feature__title,
-.feature--payroll .feature__text,
-.feature--benefits .feature__text { left: calc(70.27 * var(--k)); }
-
-.feature--onboarding .feature__title,
-.feature--onboarding .feature__text { left: calc(1155.59 * var(--k)); }
-
-.feature--experts .feature__title,
-.feature--experts .feature__text { left: calc(874.51 * var(--k)); }
-
-.feature--payroll .feature__title,
-.feature--onboarding .feature__title { top: calc(1127.6 * var(--k)); }
-
-.feature--payroll .feature__text,
-.feature--onboarding .feature__text { top: calc(1179.13 * var(--k)); }
-
-.feature--benefits .feature__title,
-.feature--experts .feature__title { top: calc(1888.1 * var(--k)); }
-
-.feature--benefits .feature__text,
-.feature--experts .feature__text { top: calc(1939.64 * var(--k)); }
 
 /* cropped card artwork */
 .crop--payroll {
@@ -1156,6 +1086,937 @@ input { font: inherit; color: inherit; }
 .showcase__figure--second {
   left: calc(72.43 * var(--k));
   top: calc(1577.78 * var(--k));
+}
+
+/* Laptop and desktop: the two showcase stories sit side by side. The base
+   vertical layout remains unchanged below this breakpoint for tablet/mobile. */
+@media (min-width: 1024px) {
+  .showcase {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'title-one title-two'
+      'figure-one figure-two';
+    grid-template-rows: auto auto;
+    column-gap: calc(40 * var(--k));
+    row-gap: calc(42 * var(--k));
+    height: auto;
+    padding-block: calc(var(--section-gap) * var(--page-scale)) calc(120 * var(--k));
+    padding-inline: calc(var(--section-inset) * var(--page-scale));
+  }
+
+  .showcase__title,
+  .showcase__title--second,
+  .showcase__figure,
+  .showcase__figure--second {
+    position: static;
+    width: 100%;
+  }
+
+  .showcase__title {
+    grid-area: title-one;
+    font-size: calc(72 * var(--k));
+  }
+
+  .showcase__title--second { grid-area: title-two; }
+
+  .showcase__figure {
+    grid-area: figure-one;
+    height: auto;
+    aspect-ratio: 1060.85 / 675.47;
+  }
+
+  .showcase__figure--second { grid-area: figure-two; }
+}
+
+/* =======================================================================
+   TABLET ARCHITECTURE
+   The desktop composition remains active through 1080px. Below that point
+   the desktop navigation and scaled type become too small for comfortable
+   reading and touch, so all three sections adopt an intrinsic tablet layout.
+   ======================================================================= */
+@media (min-width: 700px) and (max-width: 1080px) {
+  .page {
+    --tablet-inset: clamp(16px, 2.5vw, 28px);
+    --tablet-section-gap: clamp(72px, 10vw, 108px);
+    margin-inline: var(--tablet-inset);
+  }
+
+  /* Section 1: preserve the photographic composition and its motion while
+     replacing the shrinking desktop scale with readable tablet dimensions. */
+  .hero {
+    --k: clamp(0.72, calc((100vw - 2 * var(--tablet-inset)) / 1080), 1);
+    min-height: auto;
+    padding-block: 10px var(--tablet-section-gap);
+  }
+
+  .hero__media {
+    flex: none;
+    min-height: 0;
+    height: clamp(720px, 90svh, 820px);
+    margin-inline: 0;
+    border-radius: clamp(20px, 3vw, 30px);
+  }
+
+  .nav {
+    left: clamp(18px, 3vw, 28px);
+    right: clamp(18px, 3vw, 28px);
+    top: clamp(16px, 2.4vw, 24px);
+    height: 48px;
+  }
+
+  .brand {
+    width: 126px;
+    height: 43px;
+  }
+
+  .brand__mark {
+    width: 43px;
+    height: 43px;
+  }
+
+  .brand__name {
+    left: 55px;
+    top: 6px;
+    font-size: 34px;
+  }
+
+  .nav > .nav__cta { display: none; }
+
+  .nav__toggle {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    place-content: center;
+    gap: 7px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 14px;
+    background: var(--glass);
+    color: var(--white);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    cursor: pointer;
+  }
+
+  .nav__toggle span {
+    width: 22px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 240ms var(--ease-panel);
+  }
+
+  .nav__toggle[aria-expanded='true'] span:first-child {
+    transform: translateY(4.5px) rotate(45deg);
+  }
+
+  .nav__toggle[aria-expanded='true'] span:last-child {
+    transform: translateY(-4.5px) rotate(-45deg);
+  }
+
+  .nav__menu {
+    position: absolute;
+    z-index: 3;
+    right: 0;
+    top: 58px;
+    display: grid;
+    gap: 6px;
+    width: min(320px, calc(100vw - 2 * var(--tablet-inset) - 36px));
+    height: auto;
+    padding: 8px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.28);
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.14);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.98);
+    transform-origin: top right;
+    transition:
+      opacity 220ms var(--ease-panel),
+      transform 220ms var(--ease-panel),
+      visibility 220ms;
+  }
+
+  .nav__menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav__link,
+  .nav__link:nth-child(n),
+  .nav__cta--menu {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    height: auto;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+
+  .nav__cta--menu {
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .finder {
+    left: 50%;
+    top: 46%;
+    width: min(calc(541 * var(--k)), calc(100% - 48px));
+  }
+
+  .cta { bottom: clamp(36px, 6vw, 60px); }
+
+  .hero__foot {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(240px, 0.7fr);
+    align-items: start;
+    column-gap: clamp(32px, 6vw, 72px);
+    height: auto;
+    margin-top: clamp(48px, 7vw, 72px);
+    padding-inline: clamp(18px, 4vw, 44px);
+  }
+
+  .hero__title,
+  .hero__aside {
+    position: static;
+    width: auto;
+  }
+
+  .hero__title {
+    font-size: clamp(58px, 8.5vw, 82px);
+    line-height: 0.9;
+  }
+
+  .hero__aside { padding-top: 8px; }
+
+  .hero__lede {
+    width: auto;
+    margin-top: 30px;
+    font-size: clamp(18px, 2.3vw, 24px);
+  }
+
+  /* Section 2: preserve the bento hierarchy at landscape tablet widths;
+     portrait tablets use a single readable column rather than compressed
+     artwork. Card interiors keep the same design-unit scale via --k. */
+  .features {
+    --k: clamp(0.64, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94);
+    gap: clamp(56px, 8vw, 84px);
+    padding: 0 0 var(--tablet-section-gap);
+  }
+
+  .features__row {
+    gap: clamp(18px, 2.5vw, 28px);
+  }
+
+  .features__row--top {
+    grid-template-columns: minmax(0, 1.45fr) minmax(310px, 0.75fr);
+  }
+
+  .features__row--bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .feature {
+    container-type: inline-size;
+  }
+
+  .feature--payroll > * { --k: min(1, calc(100cqw / 1060.28)); }
+  .feature--onboarding > * { --k: min(1, calc(100cqw / 457.29)); }
+  .feature--benefits > * { --k: min(1, calc(100cqw / 774.44)); }
+  .feature--experts > * { --k: min(1, calc(100cqw / 738.47)); }
+
+  .feature__media {
+    height: clamp(390px, 53vw, 540px);
+    border-radius: clamp(24px, 4vw, 38px);
+  }
+
+  .feature__title {
+    margin-top: clamp(24px, 3.5vw, 38px);
+    font-size: clamp(29px, 3.8vw, 38px);
+    white-space: normal;
+  }
+
+  .feature__text {
+    margin-top: 14px;
+    font-size: clamp(17px, 2.15vw, 21px);
+    white-space: normal;
+  }
+
+  /* Section 3: the paired stories remain horizontal while both columns can
+     still support a strong heading and a legible image. */
+  .showcase {
+    --k: clamp(0.68, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'title-one title-two'
+      'figure-one figure-two';
+    grid-template-rows: auto auto;
+    column-gap: clamp(20px, 3vw, 34px);
+    row-gap: clamp(28px, 4vw, 42px);
+    height: auto;
+    padding: 0 0 var(--tablet-section-gap);
+  }
+
+  .showcase__title,
+  .showcase__title--second,
+  .showcase__figure,
+  .showcase__figure--second {
+    position: static;
+    width: 100%;
+  }
+
+  .showcase__title {
+    grid-area: title-one;
+    font-size: clamp(48px, 6.5vw, 66px);
+  }
+
+  .showcase__title--second { grid-area: title-two; }
+
+  .showcase__figure {
+    grid-area: figure-one;
+    height: auto;
+    aspect-ratio: 1060.85 / 675.47;
+  }
+
+  .showcase__figure--second { grid-area: figure-two; }
+}
+
+@media (min-width: 700px) and (max-width: 860px) {
+  .hero__foot {
+    grid-template-columns: 1fr;
+    row-gap: 38px;
+  }
+
+  .hero__aside {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    align-items: center;
+    gap: 28px;
+    padding-top: 0;
+  }
+
+  .hero__lede { margin: 0; }
+
+  .features__row--top,
+  .features__row--bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .features__row { gap: 56px; }
+
+  .feature__media { height: min(66vw, 520px); }
+
+  .feature--onboarding .crop--onboarding {
+    left: -230.96%;
+    top: -36.37%;
+    width: 330.96%;
+    height: auto;
+  }
+
+  .feature--onboarding .chip {
+    transform: translateX(calc((100cqw - 457.29px) / 2));
+  }
+
+  .showcase {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'title-one'
+      'figure-one'
+      'title-two'
+      'figure-two';
+    row-gap: 36px;
+  }
+
+  .showcase__title--second { margin-top: 34px; }
+}
+
+/* =======================================================================
+   MOBILE ARCHITECTURE
+   The tablet layout remains effective through 700px. Directly below that
+   boundary its scaled controls and typography become too small for touch and
+   reading, so the same content switches to an intrinsic mobile composition.
+   ======================================================================= */
+@media (max-width: 699px) {
+  .page {
+    --mobile-inset: clamp(12px, 4vw, 20px);
+    --mobile-section-gap: clamp(64px, 18vw, 88px);
+    margin-inline: var(--mobile-inset);
+  }
+
+  /* Section 1 --------------------------------------------------------- */
+  .hero {
+    --k: 1;
+    min-height: auto;
+    padding-block: 8px var(--mobile-section-gap);
+  }
+
+  .hero__media {
+    flex: none;
+    min-height: 0;
+    height: clamp(640px, 88svh, 760px);
+    margin-inline: 0;
+    border-radius: clamp(18px, 6vw, 26px);
+  }
+
+  .nav {
+    left: 16px;
+    right: 16px;
+    top: max(14px, env(safe-area-inset-top));
+    height: 46px;
+  }
+
+  .brand {
+    width: 112px;
+    height: 40px;
+  }
+
+  .brand__mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand__name {
+    left: 51px;
+    top: 6px;
+    font-size: 31px;
+  }
+
+  .nav > .nav__cta { display: none; }
+
+  .nav__toggle {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    place-content: center;
+    gap: 7px;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border: 0;
+    border-radius: 14px;
+    background: var(--glass);
+    color: var(--white);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    cursor: pointer;
+  }
+
+  .nav__toggle span {
+    width: 21px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 240ms var(--ease-panel);
+  }
+
+  .nav__toggle[aria-expanded='true'] span:first-child {
+    transform: translateY(4.5px) rotate(45deg);
+  }
+
+  .nav__toggle[aria-expanded='true'] span:last-child {
+    transform: translateY(-4.5px) rotate(-45deg);
+  }
+
+  .nav__menu {
+    position: absolute;
+    z-index: 3;
+    right: 0;
+    top: 56px;
+    display: grid;
+    gap: 6px;
+    width: min(300px, calc(100vw - 2 * var(--mobile-inset) - 32px));
+    height: auto;
+    padding: 8px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.3);
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.98);
+    transform-origin: top right;
+    transition:
+      opacity 220ms var(--ease-panel),
+      transform 220ms var(--ease-panel),
+      visibility 220ms;
+  }
+
+  .nav__menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav__link,
+  .nav__link:nth-child(n),
+  .nav__cta--menu {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    height: auto;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+
+  .nav__cta--menu {
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .finder {
+    left: 50%;
+    top: 45%;
+    width: calc(100% - 24px);
+    border-radius: 16px;
+  }
+
+  .finder[data-state='collapsed'] { height: 72px; }
+  .finder[data-state='suggestions'] { height: 218px; }
+  .finder[data-state='results'] { height: 344px; }
+  .finder[data-state='full'] { height: 490px; }
+
+  .finder__bar {
+    left: 8px;
+    top: 8px;
+    width: calc(100% - 16px);
+    height: 56px;
+  }
+
+  .finder__field {
+    gap: 12px;
+    width: min(58%, 230px);
+    height: 56px;
+  }
+
+  .finder .icon-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .finder .icon-button img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .finder__input,
+  .finder__demo {
+    font-size: clamp(16px, 4.5vw, 19px);
+  }
+
+  .finder__input {
+    width: calc(100% - 60px);
+  }
+
+  .finder__demo {
+    left: 60px;
+    top: 18px;
+  }
+
+  .country__toggle {
+    gap: 7px;
+    width: auto;
+    min-width: 104px;
+    height: 36px;
+    padding: 0 8px;
+  }
+
+  .country__icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  .country__label { font-size: clamp(15px, 4vw, 18px); }
+
+  .country__menu {
+    top: 40px;
+    width: 150px;
+    padding: 6px;
+  }
+
+  .country__option {
+    min-height: 42px;
+    padding: 12px 10px;
+    font-size: 15px;
+  }
+
+  .finder__roles {
+    left: 8px;
+    top: 72px;
+    gap: 4px;
+    width: calc(100% - 16px);
+  }
+
+  .pill--row {
+    justify-content: flex-start;
+    width: 100%;
+    height: 42px;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .finder__results {
+    left: 8px;
+    top: 72px;
+    gap: 4px;
+    width: calc(100% - 16px);
+  }
+
+  .finder[data-state='full'] .finder__results { top: 218px; }
+
+  .expert {
+    width: 100%;
+    height: 76px;
+    padding: 10px 12px;
+  }
+
+  .expert__who { gap: 10px; }
+
+  .expert .avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .expert__id,
+  .expert__terms { gap: 5px; }
+
+  .expert__name,
+  .expert__rate { font-size: clamp(13px, 3.6vw, 15px); }
+
+  .expert__meta,
+  .expert__type { font-size: clamp(11px, 3vw, 13px); }
+
+  .finder__count {
+    padding: 9px 0;
+    font-size: 14px;
+  }
+
+  .cta {
+    bottom: max(24px, env(safe-area-inset-bottom));
+    width: 224px;
+    height: 56px;
+  }
+
+  .cta__label,
+  .cta__go { height: 56px; }
+
+  .cta__label {
+    width: 168px;
+    font-size: 17px;
+  }
+
+  .cta__go { width: 56px; }
+
+  .cta__go img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .hero__foot {
+    display: grid;
+    gap: clamp(34px, 9vw, 48px);
+    height: auto;
+    margin-top: clamp(42px, 11vw, 58px);
+    padding-inline: clamp(4px, 2vw, 10px);
+  }
+
+  .hero__title,
+  .hero__aside {
+    position: static;
+    width: auto;
+  }
+
+  .hero__title {
+    max-width: 11ch;
+    font-size: clamp(44px, 12.2vw, 68px);
+    line-height: 0.91;
+  }
+
+  .hero__aside {
+    display: grid;
+    grid-template-columns: 178px minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(18px, 5vw, 28px);
+  }
+
+  .avatar-stack {
+    height: 50px;
+  }
+
+  .avatar-stack .avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .avatar-stack .avatar:nth-child(2) { left: 42px; }
+  .avatar-stack .avatar:nth-child(3) { left: 84px; }
+  .avatar-stack .avatar:nth-child(4) { left: 126px; }
+
+  .hero__lede {
+    width: auto;
+    margin: 0;
+    font-size: clamp(16px, 4.4vw, 20px);
+    line-height: 1.15;
+  }
+
+  /* Section 2 --------------------------------------------------------- */
+  .features {
+    display: grid;
+    gap: clamp(52px, 14vw, 72px);
+    padding: 0 0 var(--mobile-section-gap);
+  }
+
+  .features__row {
+    grid-template-columns: 1fr;
+    gap: clamp(48px, 13vw, 68px);
+  }
+
+  .feature {
+    min-width: 0;
+    container-type: inline-size;
+  }
+
+  .feature__media {
+    height: clamp(330px, 94vw, 480px);
+    border-radius: clamp(24px, 8vw, 34px);
+  }
+
+  .feature__title {
+    margin-top: clamp(24px, 7vw, 34px);
+    font-size: clamp(28px, 8vw, 38px);
+    white-space: normal;
+  }
+
+  .feature__text {
+    margin-top: 13px;
+    font-size: clamp(17px, 4.7vw, 21px);
+    white-space: normal;
+  }
+
+  .feature__media > .crop {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  .feature--payroll .crop--payroll { object-position: 30% center; }
+  .feature--onboarding .crop--onboarding { object-position: 73% center; }
+
+  .chip {
+    height: 46px;
+    padding: 12px 15px;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+
+  .chip__icon {
+    width: 23px;
+    height: 23px;
+  }
+
+  .chip--payroll {
+    left: 18px;
+    top: 30px;
+    width: auto;
+  }
+
+  .feature__connector {
+    left: 31%;
+    top: 104px;
+    width: 58px;
+    height: 108px;
+  }
+
+  .mini-card {
+    left: 43%;
+    width: 53%;
+    height: 62px;
+    padding: 9px 10px;
+    border-radius: 11px;
+  }
+
+  .mini-card--r1 { top: 88px; }
+  .mini-card--r2 { top: 160px; }
+  .mini-card--r3 { top: 232px; }
+
+  .mini-card__who { gap: 8px; }
+
+  .avatar--mini {
+    width: 38px;
+    height: 38px;
+  }
+
+  .mini-card__name,
+  .mini-card__place { font-size: clamp(11px, 3vw, 13px); }
+
+  .chip--legal {
+    left: 50%;
+    top: 30px;
+    width: auto;
+    height: 44px;
+    transform: translateX(-50%);
+  }
+
+  .chip--labor,
+  .chip--data,
+  .chip--contract {
+    left: 50%;
+    width: auto;
+    transform: translateX(-50%);
+  }
+
+  .chip--labor { top: 98px; }
+  .chip--data { top: 158px; }
+  .chip--contract { top: 218px; }
+
+  .benefit-card {
+    left: 7%;
+    top: 48px;
+    gap: 20px;
+    width: 86%;
+    height: auto;
+    padding: 16px;
+    border-radius: 15px;
+  }
+
+  .benefit-card__person { gap: 14px; }
+
+  .benefit-card__person .avatar {
+    width: 58px;
+    height: 58px;
+  }
+
+  .benefit-card__person .expert__name { font-size: 20px; }
+  .benefit-card__person .expert__meta { font-size: 15px; }
+
+  .benefit-card__tags { gap: 9px; }
+
+  .benefit-card__tags .chip {
+    max-width: 100%;
+    height: 44px;
+    font-size: 13px;
+  }
+
+  .mini-finder {
+    left: 5%;
+    top: 50%;
+    width: 90%;
+    height: 76px;
+    padding: 10px;
+    border-radius: 18px;
+    transform: translateY(-50%);
+  }
+
+  .mini-finder__field {
+    gap: 12px;
+    width: 48%;
+    height: 56px;
+  }
+
+  .mini-finder .icon-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+  }
+
+  .mini-finder .icon-button img {
+    width: 27px;
+    height: 27px;
+  }
+
+  .mini-finder__placeholder { font-size: 20px; }
+
+  .country--static {
+    gap: 8px;
+    width: auto;
+    height: 34px;
+    padding: 0 8px;
+  }
+
+  .country--static .country__icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .country--static .country__label { font-size: 18px; }
+
+  /* Section 3 --------------------------------------------------------- */
+  .showcase {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'title-one'
+      'figure-one'
+      'title-two'
+      'figure-two';
+    gap: 0;
+    height: auto;
+    padding: 0 0 var(--mobile-section-gap);
+  }
+
+  .showcase__title,
+  .showcase__title--second,
+  .showcase__figure,
+  .showcase__figure--second {
+    position: static;
+    width: 100%;
+  }
+
+  .showcase__title {
+    grid-area: title-one;
+    max-width: 10ch;
+    font-size: clamp(44px, 12vw, 66px);
+    line-height: 0.92;
+  }
+
+  .showcase__title--second {
+    grid-area: title-two;
+    max-width: 13ch;
+    margin-top: var(--mobile-section-gap);
+  }
+
+  .showcase__figure {
+    grid-area: figure-one;
+    height: auto;
+    margin-top: clamp(30px, 8vw, 42px);
+    aspect-ratio: 4 / 3;
+    border-radius: clamp(24px, 8vw, 34px);
+  }
+
+  .showcase__figure--second { grid-area: figure-two; }
+}
+
+@media (max-width: 360px) {
+  .hero__aside {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .finder__field { width: calc(100% - 106px); }
+
+  .expert__meta { max-width: 98px; }
+
+  .mini-card {
+    left: 39%;
+    width: 58%;
+  }
+
+  .mini-card__name,
+  .mini-card__place { font-size: 10px; }
 }
 
 /* ==========================================================================
