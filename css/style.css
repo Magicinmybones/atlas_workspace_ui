@@ -131,7 +131,7 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -1145,7 +1145,9 @@ input { font: inherit; color: inherit; }
   /* Section 1: preserve the photographic composition and its motion while
      replacing the shrinking desktop scale with readable tablet dimensions. */
   .hero {
-    --k: clamp(0.72, calc((100vw - 2 * var(--tablet-inset)) / 1080), 1);
+    /* --k is a length throughout the Figma scale system. Keep every clamp
+       branch length-valued so Firefox can resolve downstream multiplication. */
+    --k: clamp(0.72px, calc((100vw - 2 * var(--tablet-inset)) / 1080), 1px);
     min-height: auto;
     padding-block: 10px var(--tablet-section-gap);
   }
@@ -1307,7 +1309,7 @@ input { font: inherit; color: inherit; }
      portrait tablets use a single readable column rather than compressed
      artwork. Card interiors keep the same design-unit scale via --k. */
   .features {
-    --k: clamp(0.64, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94);
+    --k: clamp(0.64px, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94px);
     gap: clamp(56px, 8vw, 84px);
     padding: 0 0 var(--tablet-section-gap);
   }
@@ -1328,10 +1330,10 @@ input { font: inherit; color: inherit; }
     container-type: inline-size;
   }
 
-  .feature--payroll > * { --k: min(1, calc(100cqw / 1060.28)); }
-  .feature--onboarding > * { --k: min(1, calc(100cqw / 457.29)); }
-  .feature--benefits > * { --k: min(1, calc(100cqw / 774.44)); }
-  .feature--experts > * { --k: min(1, calc(100cqw / 738.47)); }
+  .feature--payroll > * { --k: min(1px, calc(100cqw / 1060.28)); }
+  .feature--onboarding > * { --k: min(1px, calc(100cqw / 457.29)); }
+  .feature--benefits > * { --k: min(1px, calc(100cqw / 774.44)); }
+  .feature--experts > * { --k: min(1px, calc(100cqw / 738.47)); }
 
   .feature__media {
     height: clamp(390px, 53vw, 540px);
@@ -1353,7 +1355,7 @@ input { font: inherit; color: inherit; }
   /* Section 3: the paired stories remain horizontal while both columns can
      still support a strong heading and a legible image. */
   .showcase {
-    --k: clamp(0.68, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94);
+    --k: clamp(0.68px, calc((100vw - 2 * var(--tablet-inset)) / 1080), 0.94px);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
@@ -1454,7 +1456,7 @@ input { font: inherit; color: inherit; }
 
   /* Section 1 --------------------------------------------------------- */
   .hero {
-    --k: 1;
+    --k: 1px;
     min-height: auto;
     padding-block: 8px var(--mobile-section-gap);
   }
