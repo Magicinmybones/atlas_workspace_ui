@@ -79,11 +79,62 @@ value at which the design fits the viewport on both axes:
 Every proportion stays identical to the artboard at any viewport size, and
 there is no horizontal overflow at any width.
 
+## The hero animation
+
+Section one replays the supplied motion study (1800 × 1350, 60fps, a 5.20s
+loop). The recording was taken apart frame by frame rather than approximated —
+the panel's top edge was tracked across all 313 frames, and every duration,
+delay and easing value below comes out of that trace.
+
+**The panel is a three-state machine**, anchored by its centre at y 339 of the
+media box, growing and shrinking around that fixed point:
+
+| state | height | contents |
+| --- | --- | --- |
+| collapsed | 83px | search row only |
+| suggestions | 223px | + the three role rows |
+| results | 388px | + the three result rows and the count |
+
+**The cycle**, in loop time:
+
+| t | |
+| --- | --- |
+| 0.00s | result rows fade out |
+| 0.07s | panel collapses to 83px (0.67s) |
+| 0.35s | the query cross-fades back to its placeholder |
+| 1.06s | "Designer" is typed, 58ms a character, each one fading in |
+| 1.38s | panel grows to 223px (0.90s) |
+| 1.62 / 1.79 / 1.96s | role rows arrive, 170ms apart |
+| 2.85s | role rows leave |
+| 3.20s | panel grows to 388px (1.52s) |
+| 3.37 / 3.57 / 3.77s | result rows arrive, 200ms apart |
+| 4.27s | "and 50+ expert hired" arrives |
+
+All three panel transitions share one easing curve. Fitting a cubic-bezier to
+the traced curve gives `cubic-bezier(0.42, 0.02, 0.05, 0.97)`, within 1% of the
+reference across its whole length. Rows scale up from 90% as they fade in, and
+leave more than twice as fast as they arrive — also measured, not guessed.
+
+**The photograph** carries a slow push-in. Fitting frame 1 onto every later
+frame recovers a pure centred zoom reaching 124% over the 5.2s, which is
+reproduced as an alternating Ken Burns about a point just above centre.
+
+Playing back the implementation and sampling it against the trace, the panel
+height tracks the reference within a few pixels at every point in the cycle,
+and each content beat lands on its measured frame.
+
+Nothing outside the panel moves — the nav, headline, avatars, copy and call to
+action are static in the reference, and they are static here.
+
 ## Interactions
 
 Only behaviour the design itself represents is implemented, in vanilla JS:
 
-- the talent panel's search field filters the role list and the result rows;
+- the demo stands down the moment anyone points at, tabs into or types in the
+  panel; it settles into a fourth `full` state — the complete Figma layout,
+  search row, roles, results and count together — so every control the design
+  draws stays reachable;
+- the search field filters the role list and the result rows;
 - the country control — which the file shows in both a "Global" and a country
   state — is a keyboard-accessible listbox over the countries in the design,
   and filters the results;
@@ -91,4 +142,12 @@ Only behaviour the design itself represents is implemented, in vanilla JS:
   selection only changes the row's own state);
 - links and buttons have hover and focus feedback.
 
-Nothing is animated: the file defines no transitions.
+The loop pauses whenever the hero scrolls out of view, and
+`prefers-reduced-motion: reduce` skips it altogether: no push-in, no cycle, the
+panel simply renders its full state.
+
+One note on fidelity: the motion study places the panel higher than the static
+Figma frame does, and never shows the roles and results at the same time. Where
+the two disagree the animation wins, since it is the later and more specific
+artefact — but every component inside the panel keeps the exact geometry,
+colour and type recorded in the `.fig`, which the geometry audit still confirms.

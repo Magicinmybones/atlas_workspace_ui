@@ -59,6 +59,10 @@
   --font: 'Figtree', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --track-tight: -0.02em;
   --track-display: -0.05em;
+
+  /* motion — fitted to the reference animation's own easing curve
+     (max deviation under 1% across all three panel transitions) */
+  --ease-panel: cubic-bezier(0.42, 0.02, 0.05, 0.97);
 }
 
 /* --k is the scale of the whole design. It is capped at 1px (100% of the
@@ -198,6 +202,24 @@ input { font: inherit; color: inherit; }
   background: var(--ink);
 }
 
+/* Slow push-in on the photograph, matching the reference motion study:
+   the frame closes in to 124% over 5.2s about a point just above centre.
+   Scaling this wrapper rather than the (much larger) image keeps the
+   composited layer down to the size of the media box. */
+.hero__zoom {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 42%;
+  animation: hero-push 5.2s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes hero-push {
+  from { transform: scale(1); }
+  to   { transform: scale(1.238); }
+}
+
 /* Figma "Rectangle 5396": 1717 x 907 at (-26,-85), image cropped to the
    43.01%–67.82% horizontal band of assets/images/hero-sunflower-field.png */
 .hero__photo {
@@ -274,23 +296,43 @@ input { font: inherit; color: inherit; }
 .nav__cta:hover { background: rgba(255, 255, 255, 0.86); }
 
 /* --------------------------------------------------------- talent panel -- */
+/* The panel resizes between four states. It is anchored by its centre —
+   the reference animation keeps that centre pinned at y 339 of the media
+   while the panel grows and shrinks around it.
+
+     collapsed    83 = 10 + 63 + 10                      search row only
+     suggestions 223 = 10 + 63 + 10 + 130 + 10           + role list
+     results     388 = 10 + 63 + 10 + 295 + 10           + result list
+     full        528 = 10 + 63 + 10 + 130 + 10 + 295 + 10  both (Figma frame)
+
+   `full` is the state the panel settles into once a visitor takes over from
+   the demo, so every control in the design stays reachable. */
 .finder {
+  --finder-h: 388;
+  --results-top: 83;
   position: absolute;
   left: calc(570 * var(--k));
-  top: calc(205 * var(--k));
-  display: flex;
-  flex-direction: column;
-  gap: calc(10 * var(--k));
+  top: calc(339 * var(--k));
   width: calc(541 * var(--k));
-  height: calc(528 * var(--k));
-  padding: calc(10 * var(--k));
+  height: calc(var(--finder-h) * var(--k));
   border-radius: var(--radius-panel);
   background: var(--glass);
   -webkit-backdrop-filter: blur(calc(16.85 * var(--k)));
   backdrop-filter: blur(calc(16.85 * var(--k)));
+  overflow: hidden;
+  transform: translateY(-50%);
+  transition: height var(--finder-dur, 600ms) var(--ease-panel);
 }
 
+.finder[data-state='collapsed']   { --finder-h: 83; }
+.finder[data-state='suggestions'] { --finder-h: 223; }
+.finder[data-state='results']     { --finder-h: 388; --results-top: 83; }
+.finder[data-state='full']        { --finder-h: 528; --results-top: 223; }
+
 .finder__bar {
+  position: absolute;
+  left: calc(10 * var(--k));
+  top: calc(10 * var(--k));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -299,6 +341,7 @@ input { font: inherit; color: inherit; }
 }
 
 .finder__field {
+  position: relative;
   display: flex;
   align-items: center;
   gap: calc(20 * var(--k));
@@ -387,6 +430,9 @@ input { font: inherit; color: inherit; }
 
 /* role list */
 .finder__roles {
+  position: absolute;
+  left: calc(10 * var(--k));
+  top: calc(83 * var(--k));
   display: flex;
   flex-direction: column;
   gap: calc(5 * var(--k));
@@ -404,11 +450,15 @@ input { font: inherit; color: inherit; }
 
 /* result list */
 .finder__results {
+  position: absolute;
+  left: calc(10 * var(--k));
+  top: calc(var(--results-top) * var(--k));
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: calc(5 * var(--k));
   width: calc(519 * var(--k));
+  transition: top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .expert {
@@ -467,6 +517,85 @@ input { font: inherit; color: inherit; }
   line-height: 1;
   letter-spacing: var(--track-tight);
 }
+
+/* ------------------------------------------------------- row reveal -- */
+/* Rows scale up from 90% while fading in, the entrance measured off the
+   reference. Transform only, so the panel's own height tween stays smooth.
+   They leave far quicker than they arrive — 180ms against 420ms — which is
+   what the reference does when a cycle tears the list down. */
+.finder .role,
+.finder .expert,
+.finder__count {
+  transition: opacity 180ms linear, transform 180ms linear;
+}
+
+.finder .role.is-revealed,
+.finder .expert.is-revealed,
+.finder .finder__count.is-revealed {
+  transition: opacity 420ms var(--ease-panel), transform 420ms var(--ease-panel);
+}
+
+.finder.is-demo .role,
+.finder.is-demo .expert,
+.finder.is-demo .finder__count {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.finder.is-demo .role.is-revealed,
+.finder.is-demo .expert.is-revealed,
+.finder.is-demo .finder__count.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------- demo field text -- */
+.finder__demo {
+  position: absolute;
+  left: calc(83 * var(--k));
+  top: calc(18.5 * var(--k));
+  display: block;
+  white-space: pre;
+  pointer-events: none;
+  font-size: calc(26 * var(--k));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--track-tight);
+  color: var(--white);
+}
+
+.finder__demo-hint,
+.finder__demo-typed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+}
+
+.finder__demo-hint {
+  opacity: 0.4;
+  transition: opacity 300ms linear;
+}
+
+.finder__demo-hint.is-hidden { opacity: 0; }
+
+.finder__demo-typed {
+  transition: opacity 300ms linear;
+}
+
+.finder__demo-typed.is-out { opacity: 0; }
+
+.finder__demo-typed .char {
+  opacity: 0;
+  transition: opacity 120ms linear;
+}
+
+.finder__demo-typed .char.is-in { opacity: 1; }
+
+/* While the demo runs the real input is invisible but still focusable, so
+   clicking or tabbing into the field hands control straight back. */
+.finder.is-demo .finder__input { opacity: 0; }
+.finder:not(.is-demo) .finder__demo { display: none; }
 
 /* ------------------------------------------------------------------ cta -- */
 .cta {
@@ -942,6 +1071,8 @@ input { font: inherit; color: inherit; }
 /* ==========================================================================
    Motion preferences
    ========================================================================== */
+/* The hero demo is decorative motion, so it is skipped entirely for anyone
+   who asks for reduced motion: the panel simply renders its full state. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

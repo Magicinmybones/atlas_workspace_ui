@@ -17,7 +17,9 @@
   <section class="hero">
 
     <div class="hero__media">
-      <img class="hero__photo" src="assets/images/hero-sunflower-field.png" alt="" aria-hidden="true">
+      <div class="hero__zoom">
+        <img class="hero__photo" src="assets/images/hero-sunflower-field.png" alt="" aria-hidden="true">
+      </div>
       <div class="hero__scrim"></div>
 
       <header class="nav">
@@ -37,7 +39,7 @@
       </header>
 
       <!-- Talent search panel -->
-      <div class="finder">
+      <div class="finder" id="finder" data-state="results">
         <div class="finder__bar">
           <div class="finder__field">
             <span class="icon-button icon-button--soft" aria-hidden="true">
@@ -45,6 +47,12 @@
             </span>
             <input class="finder__input" type="search" id="expert-search"
                    placeholder="Search expert" aria-label="Search expert" autocomplete="off">
+            <!-- Presentational copy of the field used by the looping hero demo.
+                 It is swapped for the real input the moment anyone interacts. -->
+            <span class="finder__demo" id="finder-demo" aria-hidden="true">
+              <span class="finder__demo-hint" id="demo-hint">Search expert</span>
+              <span class="finder__demo-typed" id="demo-typed"></span>
+            </span>
           </div>
 
           <div class="country">
