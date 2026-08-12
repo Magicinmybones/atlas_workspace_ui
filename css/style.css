@@ -61,14 +61,26 @@
   --track-display: -0.05em;
 }
 
-/* --k is 1px while the 1685px canvas fits, then shrinks with the viewport so
-   the design keeps its exact proportions instead of re-flowing. */
-:root { --k: min(1px, calc((100vw - 40px) / 1685)); }
+/* --k is the scale of the whole design. It is capped at 1px (100% of the
+   Figma canvas) and otherwise takes the largest value at which the hero
+   fits the viewport on BOTH axes:
 
-/* Container units exclude the scrollbar, so the 20px gutters stay exact. */
-@supports (width: 1cqw) {
-  body { container-type: inline-size; }
-  .page { --k: min(1px, calc((100cqw - 40px) / 1685)); }
+     width   — the 1685px page plus a 20px gutter either side
+     height  — the 1073px hero card, so section one is fully visible
+               without scrolling, exactly as the Figma frame presents it
+
+   Scaling rather than re-flowing keeps every proportion in the design
+   identical at any viewport size. */
+:root {
+  --k: min(1px, calc((100vw - 40px) / 1685), calc((100vh - 24px) / 1073));
+}
+
+/* Small-viewport height ignores retractable mobile browser chrome, so the
+   hero still fits when the address bar is showing. */
+@supports (height: 1svh) {
+  :root {
+    --k: min(1px, calc((100vw - 40px) / 1685), calc((100svh - 24px) / 1073));
+  }
 }
 
 /* ---------------------------------------------------------------- reset -- */

@@ -59,14 +59,25 @@ therefore multiplied by 1685 / 1186.5 = 1.420143 so all three sections sit on
 one page. This is a uniform scale — every proportion inside those sections is
 exactly as authored.
 
-## Responsive behaviour
+## Sizing and responsive behaviour
 
 The file contains only desktop artboards — no tablet or mobile frames, and no
-prototype interactions. The desktop design is reproduced exactly, and below
-1725px the whole page scales proportionally through a single custom property
-(`--k`), so the layout stays identical to the Figma frame at every viewport
-width instead of re-flowing into a design the file does not specify. There is
-no horizontal overflow at any width.
+prototype interactions — so the design is never re-flowed. Instead the whole
+page is scaled through one custom property, `--k`, which takes the largest
+value at which the design fits the viewport on both axes:
+
+```
+--k: min(1px, (100vw - 40px) / 1685, (100svh - 24px) / 1073)
+```
+
+- `1px` caps it at 100% of the Figma canvas.
+- The width term keeps a 20px gutter either side of the 1685px page.
+- The height term sizes the page so the **1073px hero card fits the viewport
+  in full** — section one is completely visible without scrolling, the way the
+  Figma frame presents it.
+
+Every proportion stays identical to the artboard at any viewport size, and
+there is no horizontal overflow at any width.
 
 ## Interactions
 
