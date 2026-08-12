@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas — Your compliant global workspace</title>
+<meta name="description" content="Discover, onboard, and pay compliant remote teams in over 150 countries.">
+<link rel="icon" href="assets/svg/logo-mark.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/figtree-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main class="page">
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+
+    <div class="hero__media">
+      <img class="hero__photo" src="assets/images/hero-sunflower-field.png" alt="" aria-hidden="true">
+      <div class="hero__scrim"></div>
+
+      <header class="nav">
+        <a class="brand" href="#">
+          <img class="brand__mark" src="assets/svg/logo-mark.svg" alt="" aria-hidden="true">
+          <span class="brand__name">Atlas</span>
+        </a>
+
+        <nav class="nav__menu" aria-label="Primary">
+          <a class="pill nav__link" href="#">Platform</a>
+          <a class="pill nav__link" href="#">Use Cases</a>
+          <a class="pill nav__link" href="#">Country</a>
+          <a class="pill nav__link" href="#">Pricing</a>
+        </nav>
+
+        <a class="pill pill--light nav__cta" href="#">Request Demo</a>
+      </header>
+
+      <!-- Talent search panel -->
+      <div class="finder">
+        <div class="finder__bar">
+          <div class="finder__field">
+            <span class="icon-button icon-button--soft" aria-hidden="true">
+              <img src="assets/svg/search.svg" alt="">
+            </span>
+            <input class="finder__input" type="search" id="expert-search"
+                   placeholder="Search expert" aria-label="Search expert" autocomplete="off">
+          </div>
+
+          <div class="country">
+            <button class="country__toggle" type="button" id="country-toggle"
+                    aria-haspopup="listbox" aria-expanded="false">
+              <img class="country__icon" src="assets/svg/globe.svg" alt="" aria-hidden="true">
+              <span class="country__label" id="country-label">Global</span>
+            </button>
+            <ul class="country__menu" id="country-menu" role="listbox" aria-labelledby="country-toggle" hidden>
+              <li class="country__option" role="option" tabindex="-1" data-country="Global" aria-selected="true">Global</li>
+              <li class="country__option" role="option" tabindex="-1" data-country="Germany" aria-selected="false">Germany</li>
+              <li class="country__option" role="option" tabindex="-1" data-country="Belgium" aria-selected="false">Belgium</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="finder__roles" id="role-list">
+          <button class="pill pill--row role" type="button" aria-pressed="false">UI Designer</button>
+          <button class="pill pill--row role" type="button" aria-pressed="false">UX Designer</button>
+          <button class="pill pill--row role" type="button" aria-pressed="false">Web Designer</button>
+        </div>
+
+        <div class="finder__results">
+          <article class="expert" data-country="Germany">
+            <div class="expert__who">
+              <img class="avatar" src="assets/images/avatar-ivan.jpg" alt="" aria-hidden="true">
+              <div class="expert__id">
+                <span class="expert__name">Ivan K.</span>
+                <span class="expert__meta">Germany, 5 year exp.</span>
+              </div>
+            </div>
+            <div class="expert__terms">
+              <span class="expert__rate">$4,500-$6,000</span>
+              <span class="expert__type">Remote</span>
+            </div>
+          </article>
+
+          <article class="expert" data-country="Belgium">
+            <div class="expert__who">
+              <img class="avatar" src="assets/images/avatar-jennifer.jpg" alt="" aria-hidden="true">
+              <div class="expert__id">
+                <span class="expert__name">Jennifer A.</span>
+                <span class="expert__meta">Belgium, 4 year exp.</span>
+              </div>
+            </div>
+            <div class="expert__terms">
+              <span class="expert__rate">$5,500-$6,500</span>
+              <span class="expert__type">In-house</span>
+            </div>
+          </article>
+
+          <article class="expert" data-country="Belgium">
+            <div class="expert__who">
+              <img class="avatar" src="assets/images/avatar-david.jpg" alt="" aria-hidden="true">
+              <div class="expert__id">
+                <span class="expert__name">David F.</span>
+                <span class="expert__meta">Belgium, 4 year exp.</span>
+              </div>
+            </div>
+            <div class="expert__terms">
+              <span class="expert__rate">$5,500-$6,000</span>
+              <span class="expert__type">In-house</span>
+            </div>
+          </article>
+
+          <p class="finder__count">and 50+ expert hired</p>
+        </div>
+      </div>
+
+      <div class="cta">
+        <a class="cta__label" href="#">Get Early Access</a>
+        <a class="cta__go" href="#" aria-label="Get Early Access">
+          <img src="assets/svg/arrow-up-right.svg" alt="" aria-hidden="true">
+        </a>
+      </div>
+    </div>
+
+    <h1 class="hero__title">Your compliant global workspace</h1>
+
+    <div class="hero__aside">
+      <div class="avatar-stack" aria-hidden="true">
+        <img class="avatar avatar--ring" src="assets/images/avatar-ivan.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-david.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-jennifer.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-fourth.jpg" alt="">
+      </div>
+      <p class="hero__lede">Discover,&nbsp;onboard,&nbsp;and pay compliant remote teams in over 150 countries.</p>
+    </div>
+  </section>
+
+  <!-- ========================== FEATURES ========================== -->
+  <section class="features">
+    <h2 class="features__title">Your compliant global workspace</h2>
+
+    <div class="features__aside">
+      <div class="avatar-stack avatar-stack--sm" aria-hidden="true">
+        <img class="avatar avatar--ring" src="assets/images/avatar-ivan.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-david.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-jennifer.jpg" alt="">
+        <img class="avatar avatar--ring" src="assets/images/avatar-fourth.jpg" alt="">
+      </div>
+      <p class="features__lede">Discover,&nbsp;onboard,&nbsp;and pay compliant remote teams in over 150 countries.</p>
+    </div>
+
+    <!-- Card 1 — Global Payroll Setup -->
+    <article class="feature feature--payroll">
+      <div class="feature__media">
+        <img class="crop crop--payroll" src="assets/images/sunflower-portrait.png" alt="" aria-hidden="true">
+
+        <span class="pill pill--light chip chip--payroll">
+          Global Payroll
+          <img class="chip__icon" src="assets/svg/globe-dark.svg" alt="" aria-hidden="true">
+        </span>
+
+        <img class="feature__connector" src="assets/svg/connector.svg" alt="" aria-hidden="true">
+
+        <div class="mini-card mini-card--r1">
+          <span class="mini-card__who">
+            <img class="avatar avatar--mini" src="assets/images/avatar-ivan.jpg" alt="" aria-hidden="true">
+            <span class="mini-card__name">Ivan K.</span>
+          </span>
+          <span class="mini-card__place">Germany</span>
+        </div>
+        <div class="mini-card mini-card--r2">
+          <span class="mini-card__who">
+            <img class="avatar avatar--mini" src="assets/images/avatar-jennifer.jpg" alt="" aria-hidden="true">
+            <span class="mini-card__name">Jennifer A.</span>
+          </span>
+          <span class="mini-card__place">Belgium</span>
+        </div>
+        <div class="mini-card mini-card--r3">
+          <span class="mini-card__who">
+            <img class="avatar avatar--mini" src="assets/images/avatar-david.jpg" alt="" aria-hidden="true">
+            <span class="mini-card__name">David F.</span>
+          </span>
+          <span class="mini-card__place">Belguim</span>
+        </div>
+      </div>
+      <h3 class="feature__title">Global Payroll Setup</h3>
+      <p class="feature__text">Automatic,&nbsp;mult-currency payments made easy</p>
+    </article>
+
+    <!-- Card 2 — Instant Onboarding -->
+    <article class="feature feature--onboarding">
+      <div class="feature__media">
+        <img class="crop crop--onboarding" src="assets/images/sunflower-portrait.png" alt="" aria-hidden="true">
+
+        <span class="pill pill--light chip chip--legal">Legal layer</span>
+
+        <span class="pill pill--glass chip chip--labor">
+          Labor Laws
+          <img class="chip__icon" src="assets/svg/check-badge.svg" alt="" aria-hidden="true">
+        </span>
+        <span class="pill pill--glass chip chip--data">
+          Data Protection
+          <img class="chip__icon" src="assets/svg/check-badge.svg" alt="" aria-hidden="true">
+        </span>
+        <span class="pill pill--glass chip chip--contract">
+          Contract
+          <img class="chip__icon" src="assets/svg/check-badge.svg" alt="" aria-hidden="true">
+        </span>
+      </div>
+      <h3 class="feature__title">Instant Onboarding</h3>
+      <p class="feature__text">Legal-verified templates to hire in 24 hours</p>
+    </article>
+
+    <!-- Card 3 — Offer competitive benefits -->
+    <article class="feature feature--benefits">
+      <div class="feature__media">
+        <img class="crop crop--cover" src="assets/images/sunflower-dusk.png" alt="" aria-hidden="true">
+
+        <div class="benefit-card">
+          <div class="benefit-card__person">
+            <img class="avatar" src="assets/images/avatar-david.jpg" alt="" aria-hidden="true">
+            <div class="expert__id">
+              <span class="expert__name">David F.</span>
+              <span class="expert__meta">Belgium, 4 year exp.</span>
+            </div>
+          </div>
+          <div class="benefit-card__tags">
+            <span class="pill pill--light chip">
+              Retirement Benefits
+              <img class="chip__icon" src="assets/svg/globe-dark.svg" alt="" aria-hidden="true">
+            </span>
+            <span class="pill pill--light chip">
+              Hearth Insurance
+              <img class="chip__icon" src="assets/svg/globe-dark.svg" alt="" aria-hidden="true">
+            </span>
+          </div>
+        </div>
+      </div>
+      <h3 class="feature__title">Offer competitive benefits</h3>
+      <p class="feature__text">Provide pensions and retirement plans. Stand out and attract the best talent.&nbsp;</p>
+    </article>
+
+    <!-- Card 4 — Access locally-based HR experts -->
+    <article class="feature feature--experts">
+      <div class="feature__media">
+        <img class="crop crop--cover" src="assets/images/sunflower-clouds.png" alt="" aria-hidden="true">
+
+        <div class="mini-finder">
+          <div class="mini-finder__field">
+            <span class="icon-button icon-button--soft" aria-hidden="true">
+              <img src="assets/svg/search.svg" alt="">
+            </span>
+            <span class="mini-finder__placeholder">Search </span>
+          </div>
+          <div class="country country--static">
+            <img class="country__icon" src="assets/svg/globe.svg" alt="" aria-hidden="true">
+            <span class="country__label">Belgium</span>
+          </div>
+        </div>
+      </div>
+      <h3 class="feature__title">Access locally-based HR experts</h3>
+      <p class="feature__text">Get done-for-you employee lifecycle management</p>
+    </article>
+  </section>
+
+  <!-- ========================== SHOWCASE ========================== -->
+  <section class="showcase">
+    <h2 class="showcase__title">Hire anywhere in 24 hours</h2>
+    <figure class="showcase__figure">
+      <img class="crop crop--cover" src="assets/images/office-window.png" alt="A team working together in a bright open-plan office">
+    </figure>
+
+    <h2 class="showcase__title showcase__title--second">Experience the competition can’t match</h2>
+    <figure class="showcase__figure showcase__figure--second">
+      <img class="crop crop--cover" src="assets/images/office-team.png" alt="Colleagues collaborating around a desk in a plant-filled workspace">
+    </figure>
+  </section>
+
+</main>
+
+<script src="js/script.js"></script>
+</body>
+</html>
