@@ -62,22 +62,45 @@ exactly as authored.
 ## Sizing and responsive behaviour
 
 The file contains only desktop artboards — no tablet or mobile frames, and no
-prototype interactions — so the design is never re-flowed. Instead the whole
-page is scaled through one custom property, `--k`, which takes the largest
-value at which the design fits the viewport on both axes:
+prototype interactions — so the design is never re-flowed into a layout it does
+not specify. Instead every length is `<figma value> × --k`, and `--k` is the
+ratio between the space the page actually has and the 1685px canvas.
+
+There are two of those ratios, because the hero and the sections under it are
+constrained by different things:
 
 ```
---k: min(1px, (100vw - 40px) / 1685, (100svh - 24px) / 1073)
+--page-scale  (100cqw - 2 × gutter) / 1685
+--hero-scale  min(--page-scale, viewport height / (675 + 336))
 ```
 
-- `1px` caps it at 100% of the Figma canvas.
-- The width term keeps a 20px gutter either side of the 1685px page.
-- The height term sizes the page so the **1073px hero card fits the viewport
-  in full** — section one is completely visible without scrolling, the way the
-  Figma frame presents it.
+- **The page always spans the viewport.** `--page-scale` is width-driven and
+  the page itself is `margin-inline: 20px`, so the design never leaves bars of
+  empty space down either side — at any width the only margin is the gutter
+  plus the media's own 10-unit inset from the design.
+- **Section one always fits one screen.** The hero is a column: the photograph
+  takes `flex: 1` and absorbs whatever height is left once the fixed parts —
+  11 above it, 71 below, a 180-tall text block and 74 of closing space, 336 in
+  all — have been laid out. So the width and height constraints never fight;
+  the page fills the width and the hero fills the height.
+- `--hero-scale` only tightens below `--page-scale` when the viewport gets too
+  short to hold the hero at full width. `675` is the shortest photograph that
+  still keeps the nav, the search panel and the CTA clear of one another, so
+  the two together are the least height section one can occupy.
+- Because the hero's height is elastic, its overlays are anchored to the edge
+  each belongs to: the nav to the top and both side margins, the CTA to the
+  bottom centre, the search panel to its own centre at 46% of the media — all
+  ratios read off the Figma frame. A `clamp()` on the panel keeps its largest
+  state from ever climbing into the nav.
 
-Every proportion stays identical to the artboard at any viewport size, and
-there is no horizontal overflow at any width.
+At the design's own proportions (a 1725 × 1073 viewport) `--k` is exactly 1 and
+the geometry audit matches the Figma frame on all but one text width. There is
+no horizontal overflow at any size, and section one needs no scrolling from
+3440 × 1400 down to 1024 × 768. Below that the page scrolls rather than
+clipping itself.
+
+`container-type: inline-size` lets the page measure in `cqw`, which excludes
+the scrollbar, so the gutters stay honest.
 
 ## The hero animation
 

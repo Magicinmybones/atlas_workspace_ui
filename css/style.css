@@ -5,9 +5,16 @@
    Coordinate system
    -----------------
    The design is authored on a 1685px-wide page. Every length is written as
-   `calc(<figma value> * var(--k))`, where --k is 1px at full size and shrinks
-   proportionally on narrower viewports. That keeps the layout identical to the
-   Figma frame at every width instead of re-flowing it into a different design.
+   `calc(<figma value> * var(--k))`, where --k is the ratio between the space
+   the page actually has and that 1685px canvas. At the design's own width --k
+   is 1 and the layout is the Figma frame to the pixel; at any other width the
+   whole design grows or shrinks with it rather than re-flowing into something
+   the file never specified.
+
+   Section one carries one extra rule: it is sized to a single screen. Its
+   photograph takes whatever height is left once the fixed parts are laid out,
+   so the hero can fill the width and the viewport height at the same time.
+   See the scale block in :root.
 
    The features / showcase sections were authored on a 1186.5px-wide artboard,
    so their values are the Figma numbers multiplied by 1685 / 1186.5 = 1.420143
@@ -36,11 +43,20 @@
 
 /* --------------------------------------------------------------- tokens -- */
 :root {
-  /* design canvas */
-  --page-width: 1685;
-  --k: 1px;
+  /* ---- Figma canvas constants -------------------------------------------
+     Every length in this file is a value from the design multiplied by a
+     scale, so these are the only raw numbers that carry meaning. */
+  --gutter: 20px;           /* breathing space either side of the page      */
+  --design-w: 1685;         /* page width of the Figma frame                */
+  --media-inset: 10;        /* gutter between the page edge and the media   */
+  --media-h: 737;           /* media height at design scale                 */
+  --hero-chrome: 336;       /* the hero minus the media: 11 above the media,
+                               71 below it, a 180 tall text block and 74 of
+                               closing space                                */
+  --media-min: 675;         /* shortest media that still clears the nav, the
+                               search panel at full size and the CTA        */
 
-  /* palette */
+  /* ---- palette ---- */
   --white: #ffffff;
   --black: #000000;
   --ink: #020202;                        /* hero media backdrop */
@@ -48,42 +64,64 @@
   --glass: rgba(0, 0, 0, 0.1);           /* 10% black surface  */
   --glass-soft: rgba(0, 0, 0, 0.08);     /* 8% black surface   */
 
-  /* radii */
-  --radius-media: calc(30 * var(--k));
-  --radius-panel: calc(18 * var(--k));
-  --radius-button: calc(14 * var(--k));
-  --radius-pill: calc(12 * var(--k));
-  --radius-card: calc(38.34 * var(--k));
+  /* ---- radii, in design units — multiplied by a scale at each use ---- */
+  --radius-media: 30;
+  --radius-panel: 18;
+  --radius-button: 14;
+  --radius-pill: 12;
+  --radius-card: 38.34;
 
-  /* type */
+  /* ---- type ---- */
   --font: 'Figtree', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --track-tight: -0.02em;
   --track-display: -0.05em;
 
-  /* motion — fitted to the reference animation's own easing curve
-     (max deviation under 1% across all three panel transitions) */
+  /* ---- motion — fitted to the reference animation's own easing curve
+     (max deviation under 1% across all three panel transitions) ---- */
   --ease-panel: cubic-bezier(0.42, 0.02, 0.05, 0.97);
+
+  /* ---- scale ------------------------------------------------------------
+     Two scales, because the hero and the sections below it are constrained
+     by different things.
+
+     --page-scale  drives everything that only has to fit the viewport
+                   WIDTH. The page always spans the viewport, so the design
+                   never leaves bars of empty space down either side.
+
+     --hero-scale  additionally respects the viewport HEIGHT, so section one
+                   always fits on one screen. It is the page scale until the
+                   viewport gets too short to hold the hero at that size, at
+                   which point the height takes over.
+
+     The hero's photograph absorbs whatever height is left after the fixed
+     parts, so the two constraints never fight: the page fills the width and
+     the hero fills the height. */
+  --viewport-h: 100vh;
+  --page-scale: calc((100vw - 2 * var(--gutter)) / var(--design-w));
+  --hero-scale: min(
+    var(--page-scale),
+    calc(var(--viewport-h) / (var(--media-min) + var(--hero-chrome)))
+  );
+  --k: var(--page-scale);
 }
 
-/* --k is the scale of the whole design. It is capped at 1px (100% of the
-   Figma canvas) and otherwise takes the largest value at which the hero
-   fits the viewport on BOTH axes:
-
-     width   — the 1685px page plus a 20px gutter either side
-     height  — the 1073px hero card, so section one is fully visible
-               without scrolling, exactly as the Figma frame presents it
-
-   Scaling rather than re-flowing keeps every proportion in the design
-   identical at any viewport size. */
-:root {
-  --k: min(1px, calc((100vw - 40px) / 1685), calc((100vh - 24px) / 1073));
-}
-
-/* Small-viewport height ignores retractable mobile browser chrome, so the
-   hero still fits when the address bar is showing. */
+/* Small-viewport height ignores retractable browser chrome. */
 @supports (height: 1svh) {
-  :root {
-    --k: min(1px, calc((100vw - 40px) / 1685), calc((100svh - 24px) / 1073));
+  :root { --viewport-h: 100svh; }
+}
+
+/* Container units exclude the scrollbar, so the page measures the space it
+   actually has rather than the space the viewport claims. */
+@supports (width: 1cqw) {
+  body { container-type: inline-size; }
+
+  .page {
+    --page-scale: calc((100cqw - 2 * var(--gutter)) / var(--design-w));
+    --hero-scale: min(
+      var(--page-scale),
+      calc(var(--viewport-h) / (var(--media-min) + var(--hero-chrome)))
+    );
+    --k: var(--page-scale);
   }
 }
 
@@ -122,8 +160,7 @@ input { font: inherit; color: inherit; }
 /* ----------------------------------------------------------------- page -- */
 .page {
   position: relative;
-  width: calc(var(--page-width) * var(--k));
-  margin: 0 auto;
+  margin-inline: var(--gutter);
 }
 
 /* Shared: circular portrait */
@@ -146,7 +183,7 @@ input { font: inherit; color: inherit; }
   height: calc(40 * var(--k));
   padding: calc(12 * var(--k)) calc(18 * var(--k));
   border: 0;
-  border-radius: var(--radius-pill);
+  border-radius: calc(var(--radius-pill) * var(--k));
   background: var(--glass);
   color: var(--white);
   font-size: calc(16 * var(--k));
@@ -164,7 +201,7 @@ input { font: inherit; color: inherit; }
   place-items: center;
   width: calc(63 * var(--k));
   height: calc(63 * var(--k));
-  border-radius: var(--radius-button);
+  border-radius: calc(var(--radius-button) * var(--k));
   flex: none;
 }
 
@@ -186,18 +223,30 @@ input { font: inherit; color: inherit; }
 /* ==========================================================================
    HERO  (Figma frame "Dribbble shot HD - 132", page card 1685 x 1073)
    ========================================================================== */
+/* The hero is a column: a photograph that takes whatever height is going,
+   then the fixed text block beneath it. Giving the column the viewport's
+   height and letting the photograph absorb the remainder is what keeps
+   section one on one screen at any desktop shape, without the design ever
+   having to shrink away from the sides.
+
+   `min-height` rather than `height`: on a viewport too short to hold even the
+   smallest usable hero, the section grows and the page scrolls rather than
+   clipping its own content. */
 .hero {
+  --k: var(--hero-scale);
   position: relative;
-  height: calc(1073 * var(--k));
+  display: flex;
+  flex-direction: column;
+  min-height: var(--viewport-h);
+  padding-block: calc(11 * var(--k)) calc(74 * var(--k));
 }
 
 .hero__media {
-  position: absolute;
-  left: calc(10 * var(--k));
-  top: calc(11 * var(--k));
-  width: calc(1665 * var(--k));
-  height: calc(737 * var(--k));
-  border-radius: var(--radius-media);
+  position: relative;
+  flex: 1 1 auto;
+  min-height: calc(var(--media-min) * var(--k));
+  margin-inline: calc(var(--media-inset) * var(--k));
+  border-radius: calc(var(--radius-media) * var(--k));
   overflow: hidden;
   background: var(--ink);
 }
@@ -220,15 +269,23 @@ input { font: inherit; color: inherit; }
   to   { transform: scale(1.238); }
 }
 
-/* Figma "Rectangle 5396": 1717 x 907 at (-26,-85), image cropped to the
-   43.01%–67.82% horizontal band of assets/images/hero-sunflower-field.png */
+/* Figma "Rectangle 5396": the photograph is laid in at 1717 x 3656.161 over
+   a 1665 x 737 media box, offset so the 43.01%–67.82% band of the picture is
+   what shows. Expressed against the media box those numbers become ratios,
+   which hold that exact crop at the design's proportions and keep covering
+   the box as the media grows taller or wider.
+
+     width  1717    / 1665  = 103.1231%   (and so left = -26 / 1665)
+     the picture's 55.41% mark sits on the media's centre line */
 .hero__photo {
   position: absolute;
-  left: calc(-26 * var(--k));
-  top: calc(-1657.451 * var(--k));
-  width: calc(1717 * var(--k));
-  height: calc(3656.161 * var(--k));
+  left: -1.5615%;
+  top: 50%;
+  width: 103.1231%;
   max-width: none;
+  height: auto;
+  aspect-ratio: 1717 / 3656.161;
+  transform: translateY(-55.4132%);
 }
 
 .hero__scrim {
@@ -239,14 +296,16 @@ input { font: inherit; color: inherit; }
 }
 
 /* ------------------------------------------------------------------ nav -- */
+/* Pinned to the top of the media and stretched between its own margins, so
+   the bar spans whatever width the photograph ends up with. */
 .nav {
   position: absolute;
   left: calc(26 * var(--k));
+  right: calc(25 * var(--k));
   top: calc(19 * var(--k));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: calc(1614 * var(--k));
   height: calc(43 * var(--k));
 }
 
@@ -307,21 +366,38 @@ input { font: inherit; color: inherit; }
 
    `full` is the state the panel settles into once a visitor takes over from
    the demo, so every control in the design stays reachable. */
+/* Held by its own centre, 8 design units right of the media's centre line and
+   46% of the way down it — both read straight off the Figma frame, but as
+   ratios so the panel keeps its place however the photograph is shaped.
+
+   The clamp keeps that centre far enough from the top and bottom edges that
+   the panel cannot climb into the nav or slide off past the CTA, whatever
+   height it currently has. It is inert at every size the looping demo uses —
+   only the taller state a visitor opens can reach it — so the animation is
+   untouched, and `top` joins the transition so that state still arrives
+   smoothly. */
 .finder {
   --finder-h: 388;
   --results-top: 83;
+  --finder-half: calc(var(--finder-h) * var(--k) / 2);
   position: absolute;
-  left: calc(570 * var(--k));
-  top: calc(339 * var(--k));
+  left: calc(50% + 8 * var(--k));
+  top: clamp(
+    calc(82 * var(--k) + var(--finder-half)),
+    calc(100% * 339 / var(--media-h)),
+    calc(100% - 159 * var(--k) - var(--finder-half))
+  );
   width: calc(541 * var(--k));
   height: calc(var(--finder-h) * var(--k));
-  border-radius: var(--radius-panel);
+  border-radius: calc(var(--radius-panel) * var(--k));
   background: var(--glass);
   -webkit-backdrop-filter: blur(calc(16.85 * var(--k)));
   backdrop-filter: blur(calc(16.85 * var(--k)));
   overflow: hidden;
-  transform: translateY(-50%);
-  transition: height var(--finder-dur, 600ms) var(--ease-panel);
+  transform: translate(-50%, -50%);
+  transition:
+    height var(--finder-dur, 600ms) var(--ease-panel),
+    top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .finder[data-state='collapsed']   { --finder-h: 83; }
@@ -406,7 +482,7 @@ input { font: inherit; color: inherit; }
   padding: calc(6 * var(--k));
   list-style: none;
   width: calc(180 * var(--k));
-  border-radius: var(--radius-pill);
+  border-radius: calc(var(--radius-pill) * var(--k));
   background: rgba(0, 0, 0, 0.55);
   -webkit-backdrop-filter: blur(calc(16.85 * var(--k)));
   backdrop-filter: blur(calc(16.85 * var(--k)));
@@ -468,7 +544,7 @@ input { font: inherit; color: inherit; }
   width: calc(519 * var(--k));
   height: calc(80 * var(--k));
   padding: calc(12 * var(--k)) calc(18 * var(--k));
-  border-radius: var(--radius-pill);
+  border-radius: calc(var(--radius-pill) * var(--k));
   background: var(--glass);
 }
 
@@ -598,13 +674,16 @@ input { font: inherit; color: inherit; }
 .finder:not(.is-demo) .finder__demo { display: none; }
 
 /* ------------------------------------------------------------------ cta -- */
+/* Centred on the media and held 76 design units off its bottom edge, which is
+   where the Figma frame puts it. */
 .cta {
   position: absolute;
-  left: calc(706 * var(--k));
-  top: calc(598 * var(--k));
+  left: 50%;
+  bottom: calc(76 * var(--k));
   display: flex;
   width: calc(252 * var(--k));
   height: calc(63 * var(--k));
+  transform: translateX(-50%);
 }
 
 .cta__label,
@@ -612,7 +691,7 @@ input { font: inherit; color: inherit; }
   display: grid;
   place-items: center;
   height: calc(63 * var(--k));
-  border-radius: var(--radius-button);
+  border-radius: calc(var(--radius-button) * var(--k));
   background: var(--white);
   color: var(--black);
 }
@@ -636,10 +715,20 @@ input { font: inherit; color: inherit; }
 .cta__go:hover { background: rgba(255, 255, 255, 0.86); }
 
 /* -------------------------------------------------------- hero headline -- */
+/* The closing block keeps its own height and hugs the page's two edges —
+   headline against the left margin, the aside against the right — so the gap
+   between them opens up on a wider screen instead of the pair drifting. */
+.hero__foot {
+  position: relative;
+  flex: none;
+  height: calc(180 * var(--k));
+  margin-top: calc(71 * var(--k));
+}
+
 .hero__title {
   position: absolute;
   left: calc(57 * var(--k));
-  top: calc(819 * var(--k));
+  top: 0;
   width: calc(757 * var(--k));
   margin: 0;
   font-size: calc(100 * var(--k));
@@ -650,8 +739,9 @@ input { font: inherit; color: inherit; }
 
 .hero__aside {
   position: absolute;
-  left: calc(1213 * var(--k));
-  top: calc(836 * var(--k));
+  right: calc(35 * var(--k));
+  top: calc(17 * var(--k));
+  width: calc(437 * var(--k));
 }
 
 .avatar-stack {
@@ -724,7 +814,7 @@ input { font: inherit; color: inherit; }
 /* ---------------------------------------------------------- bento cards -- */
 .feature__media {
   position: absolute;
-  border-radius: var(--radius-card);
+  border-radius: calc(var(--radius-card) * var(--k));
   overflow: hidden;
 }
 
@@ -1059,7 +1149,7 @@ input { font: inherit; color: inherit; }
   width: calc(1060.85 * var(--k));
   height: calc(675.47 * var(--k));
   margin: 0;
-  border-radius: var(--radius-card);
+  border-radius: calc(var(--radius-card) * var(--k));
   overflow: hidden;
 }
 
