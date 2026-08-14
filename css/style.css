@@ -2191,6 +2191,97 @@ html.scroll-reveal-ready .feature:not(.is-revealed) .feature__text {
   transform: translateY(calc(9 * var(--k)));
 }
 
+/* Internal card choreography begins after each media panel establishes itself.
+   Delays are local to the feature, keeping every scene readable as one action. */
+.feature--payroll .feature__connector { --inside-delay: calc(250ms + var(--scroll-order) * 90ms); }
+.feature--payroll .chip--payroll { --inside-delay: calc(320ms + var(--scroll-order) * 90ms); }
+.feature--payroll .mini-card--r1 { --inside-delay: calc(390ms + var(--scroll-order) * 90ms); }
+.feature--payroll .mini-card--r2 { --inside-delay: calc(460ms + var(--scroll-order) * 90ms); }
+.feature--payroll .mini-card--r3 { --inside-delay: calc(530ms + var(--scroll-order) * 90ms); }
+
+.feature--onboarding .chip--legal { --inside-delay: calc(280ms + var(--scroll-order) * 90ms); }
+.feature--onboarding .chip--labor { --inside-delay: calc(360ms + var(--scroll-order) * 90ms); }
+.feature--onboarding .chip--data { --inside-delay: calc(440ms + var(--scroll-order) * 90ms); }
+.feature--onboarding .chip--contract { --inside-delay: calc(520ms + var(--scroll-order) * 90ms); }
+
+.feature--benefits .benefit-card { --inside-delay: calc(280ms + var(--scroll-order) * 90ms); }
+.feature--benefits .benefit-card__person { --inside-delay: calc(390ms + var(--scroll-order) * 90ms); }
+.feature--benefits .benefit-card__tags .chip:first-child { --inside-delay: calc(480ms + var(--scroll-order) * 90ms); }
+.feature--benefits .benefit-card__tags .chip:last-child { --inside-delay: calc(560ms + var(--scroll-order) * 90ms); }
+
+.feature--experts .mini-finder { --inside-delay: calc(300ms + var(--scroll-order) * 90ms); }
+.feature--experts .icon-button { --inside-delay: calc(410ms + var(--scroll-order) * 90ms); }
+.feature--experts .mini-finder__placeholder { --inside-delay: calc(470ms + var(--scroll-order) * 90ms); }
+.feature--experts .country--static { --inside-delay: calc(540ms + var(--scroll-order) * 90ms); }
+
+html.scroll-reveal-ready .feature.is-revealed .chip--payroll,
+html.scroll-reveal-ready .feature.is-revealed .mini-card,
+html.scroll-reveal-ready .feature.is-revealed.feature--onboarding .chip,
+html.scroll-reveal-ready .feature.is-revealed .benefit-card,
+html.scroll-reveal-ready .feature.is-revealed .benefit-card__person,
+html.scroll-reveal-ready .feature.is-revealed .benefit-card__tags .chip,
+html.scroll-reveal-ready .feature.is-revealed .mini-finder,
+html.scroll-reveal-ready .feature.is-revealed .mini-finder .icon-button,
+html.scroll-reveal-ready .feature.is-revealed .mini-finder__placeholder,
+html.scroll-reveal-ready .feature.is-revealed .country--static {
+  transition:
+    opacity 460ms var(--ease-panel) var(--inside-delay),
+    transform 640ms var(--ease-panel) var(--inside-delay);
+}
+
+html.scroll-reveal-ready .feature.is-revealed .feature__connector {
+  transition:
+    opacity 420ms var(--ease-panel) var(--inside-delay),
+    clip-path 620ms var(--ease-panel) var(--inside-delay);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .chip--payroll {
+  opacity: 0;
+  transform: translateX(calc(-14 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .feature__connector {
+  opacity: 0;
+  clip-path: inset(50% 0 50% 0);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .mini-card {
+  opacity: 0;
+  transform: translateX(calc(18 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed).feature--onboarding .chip {
+  opacity: 0;
+  transform: translateY(calc(10 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .benefit-card {
+  opacity: 0;
+  transform: translateY(calc(14 * var(--k))) scale(0.985);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .benefit-card__person,
+html.scroll-reveal-ready .feature:not(.is-revealed) .benefit-card__tags .chip {
+  opacity: 0;
+  transform: translateY(calc(8 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .mini-finder {
+  opacity: 0;
+  transform: translateY(calc(12 * var(--k))) scale(0.985);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .mini-finder .icon-button,
+html.scroll-reveal-ready .feature:not(.is-revealed) .mini-finder__placeholder {
+  opacity: 0;
+  transform: translateX(calc(-8 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .country--static {
+  opacity: 0;
+  transform: translateX(calc(8 * var(--k)));
+}
+
 html.scroll-reveal-ready .showcase__title.is-revealed {
   transition:
     opacity 620ms var(--ease-panel) calc(var(--scroll-order) * 100ms),
@@ -2255,6 +2346,17 @@ html.scroll-reveal-ready .showcase__figure:not(.is-revealed) {
   html.scroll-reveal-ready .feature .feature__media,
   html.scroll-reveal-ready .feature .feature__title,
   html.scroll-reveal-ready .feature .feature__text,
+  html.scroll-reveal-ready .feature .chip--payroll,
+  html.scroll-reveal-ready .feature .feature__connector,
+  html.scroll-reveal-ready .feature .mini-card,
+  html.scroll-reveal-ready .feature.feature--onboarding .chip,
+  html.scroll-reveal-ready .feature .benefit-card,
+  html.scroll-reveal-ready .feature .benefit-card__person,
+  html.scroll-reveal-ready .feature .benefit-card__tags .chip,
+  html.scroll-reveal-ready .feature .mini-finder,
+  html.scroll-reveal-ready .feature .mini-finder .icon-button,
+  html.scroll-reveal-ready .feature .mini-finder__placeholder,
+  html.scroll-reveal-ready .feature .country--static,
   html.scroll-reveal-ready .showcase__title,
   html.scroll-reveal-ready .showcase__figure {
     opacity: 1;

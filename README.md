@@ -146,6 +146,9 @@ The feature and showcase sections reveal once as they enter the viewport. Each
 feature behaves as one product scene: its media establishes the card, then the
 title and supporting copy overlap into place. On desktop, paired cards use a
 small second-card delay; on mobile, each card waits for its own scroll position.
+Inside each feature, the interface assembles once in a content-specific order:
+employee rows and compliance chips cascade, while the benefit and search panels
+build from their glass shell into their details.
 
 Showcase stories use an editorial sequence: headline first, paired image just
 afterward. Observed targets are disconnected after revealing, so nothing
