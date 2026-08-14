@@ -77,8 +77,7 @@
   --track-tight: -0.02em;
   --track-display: -0.05em;
 
-  /* ---- motion — fitted to the reference animation's own easing curve
-     (max deviation under 1% across all three panel transitions) ---- */
+  /* ---- motion — fast arrival and long, controlled deceleration ---- */
   --ease-panel: cubic-bezier(0.42, 0.02, 0.05, 0.97);
 
   /* ---- scale ------------------------------------------------------------
@@ -252,26 +251,14 @@ input { font: inherit; color: inherit; }
   background: var(--ink);
 }
 
-/* Slow push-in on the photograph, matching the reference motion study:
-   the frame closes in to 124% over 5.2s about a point just above centre.
-   Scaling this wrapper rather than the (much larger) image keeps the
-   composited layer down to the size of the media box. */
+/* The photograph is the stage for the entrance and remains completely still. */
 .hero__zoom {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform-origin: 50% 42%;
-  animation: hero-push 5.2s ease-in-out infinite alternate;
-  will-change: transform;
 }
 
-@keyframes hero-push {
-  from { transform: scale(1); }
-  to   { transform: scale(1.238); }
-}
-
-/* The portrait video fills the media frame while the existing zoom wrapper
-   supplies the original slow push-in treatment. */
+/* The design's extracted hero still fills the media frame without motion. */
 .hero__video {
   position: absolute;
   inset: 0;
@@ -368,11 +355,7 @@ input { font: inherit; color: inherit; }
    ratios so the panel keeps its place however the photograph is shaped.
 
    The clamp keeps that centre far enough from the top and bottom edges that
-   the panel cannot climb into the nav or slide off past the CTA, whatever
-   height it currently has. It is inert at every size the looping demo uses —
-   only the taller state a visitor opens can reach it — so the animation is
-   untouched, and `top` joins the transition so that state still arrives
-   smoothly. */
+   the full panel cannot climb into the nav or slide off past the CTA. */
 .finder {
   --finder-h: 388;
   --results-top: 83;
@@ -392,15 +375,17 @@ input { font: inherit; color: inherit; }
   backdrop-filter: blur(calc(16.85 * var(--k)));
   overflow: hidden;
   transform: translate(-50%, -50%);
-  transition:
-    height var(--finder-dur, 600ms) var(--ease-panel),
-    top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .finder[data-state='collapsed']   { --finder-h: 83; }
 .finder[data-state='suggestions'] { --finder-h: 223; }
 .finder[data-state='results']     { --finder-h: 388; --results-top: 83; }
 .finder[data-state='full']        { --finder-h: 528; --results-top: 223; }
+
+.finder[data-state='collapsed'] .finder__roles,
+.finder[data-state='collapsed'] .finder__results,
+.finder[data-state='suggestions'] .finder__results,
+.finder[data-state='results'] .finder__roles { display: none; }
 
 .finder__bar {
   position: absolute;
@@ -531,7 +516,6 @@ input { font: inherit; color: inherit; }
   align-items: center;
   gap: calc(5 * var(--k));
   width: calc(519 * var(--k));
-  transition: top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .expert {
@@ -590,85 +574,6 @@ input { font: inherit; color: inherit; }
   line-height: 1;
   letter-spacing: var(--track-tight);
 }
-
-/* ------------------------------------------------------- row reveal -- */
-/* Rows scale up from 90% while fading in, the entrance measured off the
-   reference. Transform only, so the panel's own height tween stays smooth.
-   They leave far quicker than they arrive — 180ms against 420ms — which is
-   what the reference does when a cycle tears the list down. */
-.finder .role,
-.finder .expert,
-.finder__count {
-  transition: opacity 180ms linear, transform 180ms linear;
-}
-
-.finder .role.is-revealed,
-.finder .expert.is-revealed,
-.finder .finder__count.is-revealed {
-  transition: opacity 420ms var(--ease-panel), transform 420ms var(--ease-panel);
-}
-
-.finder.is-demo .role,
-.finder.is-demo .expert,
-.finder.is-demo .finder__count {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-.finder.is-demo .role.is-revealed,
-.finder.is-demo .expert.is-revealed,
-.finder.is-demo .finder__count.is-revealed {
-  opacity: 1;
-  transform: none;
-}
-
-/* --------------------------------------------------- demo field text -- */
-.finder__demo {
-  position: absolute;
-  left: calc(83 * var(--k));
-  top: calc(18.5 * var(--k));
-  display: block;
-  white-space: pre;
-  pointer-events: none;
-  font-size: calc(26 * var(--k));
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: var(--track-tight);
-  color: var(--white);
-}
-
-.finder__demo-hint,
-.finder__demo-typed {
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: pre;
-}
-
-.finder__demo-hint {
-  opacity: 0.4;
-  transition: opacity 300ms linear;
-}
-
-.finder__demo-hint.is-hidden { opacity: 0; }
-
-.finder__demo-typed {
-  transition: opacity 300ms linear;
-}
-
-.finder__demo-typed.is-out { opacity: 0; }
-
-.finder__demo-typed .char {
-  opacity: 0;
-  transition: opacity 120ms linear;
-}
-
-.finder__demo-typed .char.is-in { opacity: 1; }
-
-/* While the demo runs the real input is invisible but still focusable, so
-   clicking or tabbing into the field hands control straight back. */
-.finder.is-demo .finder__input { opacity: 0; }
-.finder:not(.is-demo) .finder__demo { display: none; }
 
 /* ------------------------------------------------------------------ cta -- */
 /* Centred on the media and held 76 design units off its bottom edge, which is
@@ -2022,12 +1927,151 @@ input { font: inherit; color: inherit; }
 }
 
 /* ==========================================================================
-   Motion preferences
+   One-time entrance
+   The background never moves. Only meaningful foreground groups participate,
+   and the two root classes are removed once the sequence completes so no
+   entrance transition remains active afterward.
    ========================================================================== */
-/* The hero demo is decorative motion, so it is skipped entirely for anyone
-   who asks for reduced motion: the panel simply renders its full state. */
+html.entrance-pending .brand,
+html.entrance-pending .nav__link,
+html.entrance-pending .nav > .nav__cta,
+html.entrance-pending .nav__toggle,
+html.entrance-pending .finder,
+html.entrance-pending .cta,
+html.entrance-pending .hero__title,
+html.entrance-pending .avatar-stack,
+html.entrance-pending .hero__lede {
+  opacity: 0;
+}
+
+html.entrance-pending .brand { transform: translateY(calc(-8 * var(--k))); }
+html.entrance-pending .nav__link,
+html.entrance-pending .nav > .nav__cta,
+html.entrance-pending .nav__toggle { transform: translateY(calc(-6 * var(--k))); }
+
+html.entrance-pending .hero__title {
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(calc(18 * var(--k)));
+}
+
+html.entrance-pending .finder {
+  clip-path: inset(5% 0 5% 0 round calc(var(--radius-panel) * var(--k)));
+  transform: translate(-50%, -50%) scale(0.98);
+}
+
+html.entrance-pending .cta {
+  transform: translateX(-50%) translateY(calc(10 * var(--k))) scale(0.985);
+}
+
+html.entrance-pending .avatar-stack {
+  transform: translateY(calc(8 * var(--k))) scale(0.97);
+  transform-origin: left center;
+}
+
+html.entrance-pending .hero__lede { transform: translateY(calc(10 * var(--k))); }
+
+html.entrance-pending .brand,
+html.entrance-pending .nav__link,
+html.entrance-pending .nav > .nav__cta,
+html.entrance-pending .nav__toggle,
+html.entrance-pending .finder,
+html.entrance-pending .cta,
+html.entrance-pending .hero__title,
+html.entrance-pending .avatar-stack,
+html.entrance-pending .hero__lede,
+html.entrance-playing .brand,
+html.entrance-playing .nav__link,
+html.entrance-playing .nav > .nav__cta,
+html.entrance-playing .nav__toggle,
+html.entrance-playing .finder,
+html.entrance-playing .cta,
+html.entrance-playing .hero__title,
+html.entrance-playing .avatar-stack,
+html.entrance-playing .hero__lede {
+  will-change: opacity, transform;
+}
+
+html.entrance-playing .brand {
+  transition: opacity 560ms var(--ease-panel) 80ms,
+              transform 680ms var(--ease-panel) 80ms;
+}
+
+html.entrance-playing .nav__link {
+  transition: opacity 460ms var(--ease-panel), transform 580ms var(--ease-panel);
+}
+
+html.entrance-playing .nav__link:nth-child(1) { transition-delay: 130ms; }
+html.entrance-playing .nav__link:nth-child(2) { transition-delay: 170ms; }
+html.entrance-playing .nav__link:nth-child(3) { transition-delay: 210ms; }
+html.entrance-playing .nav__link:nth-child(4) { transition-delay: 250ms; }
+
+html.entrance-playing .nav > .nav__cta {
+  transition: opacity 480ms var(--ease-panel) 280ms,
+              transform 600ms var(--ease-panel) 280ms;
+}
+
+html.entrance-playing .nav__toggle {
+  transition: opacity 480ms var(--ease-panel) 130ms,
+              transform 600ms var(--ease-panel) 130ms;
+}
+
+html.entrance-playing .hero__title {
+  transition: opacity 680ms var(--ease-panel) 180ms,
+              transform 900ms var(--ease-panel) 180ms,
+              clip-path 900ms var(--ease-panel) 180ms;
+}
+
+html.entrance-playing .finder {
+  transition: opacity 720ms var(--ease-panel) 390ms,
+              transform 920ms var(--ease-panel) 390ms,
+              clip-path 920ms var(--ease-panel) 390ms;
+}
+
+html.entrance-playing .cta {
+  transition: opacity 520ms var(--ease-panel) 710ms,
+              transform 700ms var(--ease-panel) 710ms;
+}
+
+html.entrance-playing .avatar-stack {
+  transition: opacity 500ms var(--ease-panel) 610ms,
+              transform 680ms var(--ease-panel) 610ms;
+}
+
+html.entrance-playing .hero__lede {
+  transition: opacity 560ms var(--ease-panel) 720ms,
+              transform 720ms var(--ease-panel) 720ms;
+}
+
+@media (max-width: 699px) {
+  html.entrance-pending .hero__title { transform: translateY(12px); }
+  html.entrance-pending .finder { transform: translate(-50%, -50%) scale(0.99); }
+  html.entrance-pending .cta { transform: translateX(-50%) translateY(7px); }
+}
+
+/* Motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after { transition: none !important; animation: none !important; }
+
+  html.entrance-pending .brand,
+  html.entrance-pending .nav__link,
+  html.entrance-pending .nav > .nav__cta,
+  html.entrance-pending .nav__toggle,
+  html.entrance-pending .finder,
+  html.entrance-pending .cta,
+  html.entrance-pending .hero__title,
+  html.entrance-pending .avatar-stack,
+  html.entrance-pending .hero__lede { opacity: 1; clip-path: none; }
+
+  html.entrance-pending .brand,
+  html.entrance-pending .nav__link,
+  html.entrance-pending .nav > .nav__cta,
+  html.entrance-pending .nav__toggle,
+  html.entrance-pending .hero__title,
+  html.entrance-pending .avatar-stack,
+  html.entrance-pending .hero__lede { transform: none; }
+
+  html.entrance-pending .finder { transform: translate(-50%, -50%); }
+  html.entrance-pending .cta { transform: translateX(-50%); }
 }

@@ -7,6 +7,12 @@
 <meta name="description" content="Discover, onboard, and pay compliant remote teams in over 150 countries.">
 <link rel="icon" href="assets/svg/logo-mark.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/figtree-500.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  document.documentElement.classList.add('has-js', 'entrance-pending');
+  window.__atlasEntranceFallback = window.setTimeout(function () {
+    document.documentElement.classList.remove('entrance-pending', 'entrance-playing');
+  }, 3500);
+</script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,10 +24,8 @@
 
     <div class="hero__media">
       <div class="hero__zoom">
-        <video class="hero__video" autoplay muted loop playsinline preload="metadata"
-               poster="assets/images/hero-sunflower-field.png" aria-hidden="true" tabindex="-1">
-          <source src="assets/videos/sunflower-field.mp4" type="video/mp4">
-        </video>
+        <img class="hero__video" src="assets/images/hero-sunflower-field.png"
+             alt="" aria-hidden="true" fetchpriority="high" decoding="async">
       </div>
       <div class="hero__scrim"></div>
 
@@ -57,12 +61,6 @@
             </span>
             <input class="finder__input" type="search" id="expert-search"
                    placeholder="Search expert" aria-label="Search expert" autocomplete="off">
-            <!-- Presentational copy of the field used by the looping hero demo.
-                 It is swapped for the real input the moment anyone interacts. -->
-            <span class="finder__demo" id="finder-demo" aria-hidden="true">
-              <span class="finder__demo-hint" id="demo-hint">Search expert</span>
-              <span class="finder__demo-typed" id="demo-typed"></span>
-            </span>
           </div>
 
           <div class="country">
