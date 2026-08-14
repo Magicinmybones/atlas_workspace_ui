@@ -105,8 +105,8 @@ the scrollbar, so the gutters stay honest.
 ## The hero entrance
 
 Section one has one finite, overlapping entrance sequence lasting about 1.7
-seconds. The sunflower image is a completely static stage. Foreground groups
-establish the composition in this order:
+seconds. The sunflower video and existing finder cycle remain paused during
+that sequence while foreground groups establish the composition in this order:
 
 1. brand and understated navigation;
 2. the clipped primary headline;
@@ -118,21 +118,24 @@ revealed with clipping, while navigation and supporting content use short
 settles and the finder combines a restrained scale with a shallow clip reveal.
 The groups overlap rather than waiting for one another to finish.
 
-The entrance classes, timers, listener and compositor hints are removed when
-the sequence completes. No loop, scroll observer or persistent animation
-remains. Reduced-motion visitors receive the finished composition immediately.
+The entrance classes, timer, listener and compositor hints are removed when
+the sequence completes. At that boundary the original ambient hero push,
+looping video and measured finder demo begin; none of them run behind or compete
+with the entrance.
 
 ## Interactions
 
 Only behaviour the design itself represents is implemented, in vanilla JS:
 
-- the panel remains in the settled `results` state — search row, expert cards
-  and count together — so the product proof stays clear without later motion;
+- the panel stays in its settled `results` state during the entrance, then its
+  original measured search/suggestion/result cycle begins;
+- touching or focusing the panel stops its demo and opens the complete `full`
+  state so the controls remain available;
 - the search field filters the result rows;
 - the country control — which the file shows in both a "Global" and a country
   state — is a keyboard-accessible listbox over the countries in the design,
   and filters the results;
 - links and buttons have hover and focus feedback.
 
-`prefers-reduced-motion: reduce` skips the entrance altogether and renders the
-panel and hero content immediately in their final states.
+`prefers-reduced-motion: reduce` skips both the entrance and the continuing
+hero motion, rendering the complete panel and hero content immediately.

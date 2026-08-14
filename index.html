@@ -24,8 +24,10 @@
 
     <div class="hero__media">
       <div class="hero__zoom">
-        <img class="hero__video" src="assets/images/hero-sunflower-field.png"
-             alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+        <video class="hero__video" muted loop playsinline preload="metadata"
+               poster="assets/images/hero-sunflower-field.png" aria-hidden="true" tabindex="-1">
+          <source src="assets/videos/sunflower-field.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="hero__scrim"></div>
 
@@ -61,6 +63,10 @@
             </span>
             <input class="finder__input" type="search" id="expert-search"
                    placeholder="Search expert" aria-label="Search expert" autocomplete="off">
+            <span class="finder__demo" id="finder-demo" aria-hidden="true">
+              <span class="finder__demo-hint" id="demo-hint">Search expert</span>
+              <span class="finder__demo-typed" id="demo-typed"></span>
+            </span>
           </div>
 
           <div class="country">
