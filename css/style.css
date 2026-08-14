@@ -251,14 +251,25 @@ input { font: inherit; color: inherit; }
   background: var(--ink);
 }
 
-/* The photograph is the stage for the entrance and remains completely still. */
+/* The hero remains still throughout the entrance. The original ambient push
+   is enabled only after the entrance controller announces completion. */
 .hero__zoom {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  transform-origin: 50% 42%;
 }
 
-/* The design's extracted hero still fills the media frame without motion. */
+html.continuous-motion .hero__zoom {
+  animation: hero-push 5.2s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes hero-push {
+  from { transform: scale(1); }
+  to   { transform: scale(1.238); }
+}
+
 .hero__video {
   position: absolute;
   inset: 0;
@@ -375,6 +386,9 @@ input { font: inherit; color: inherit; }
   backdrop-filter: blur(calc(16.85 * var(--k)));
   overflow: hidden;
   transform: translate(-50%, -50%);
+  transition:
+    height var(--finder-dur, 600ms) var(--ease-panel),
+    top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .finder[data-state='collapsed']   { --finder-h: 83; }
@@ -516,6 +530,7 @@ input { font: inherit; color: inherit; }
   align-items: center;
   gap: calc(5 * var(--k));
   width: calc(519 * var(--k));
+  transition: top var(--finder-dur, 600ms) var(--ease-panel);
 }
 
 .expert {
@@ -574,6 +589,75 @@ input { font: inherit; color: inherit; }
   line-height: 1;
   letter-spacing: var(--track-tight);
 }
+
+/* The original finder cycle begins only after the entrance completes. */
+.finder .role,
+.finder .expert,
+.finder__count {
+  transition: opacity 180ms linear, transform 180ms linear;
+}
+
+.finder .role.is-revealed,
+.finder .expert.is-revealed,
+.finder .finder__count.is-revealed {
+  transition: opacity 420ms var(--ease-panel), transform 420ms var(--ease-panel);
+}
+
+.finder.is-demo .role,
+.finder.is-demo .expert,
+.finder.is-demo .finder__count {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.finder.is-demo .role.is-revealed,
+.finder.is-demo .expert.is-revealed,
+.finder.is-demo .finder__count.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.finder__demo {
+  position: absolute;
+  left: calc(83 * var(--k));
+  top: calc(18.5 * var(--k));
+  display: block;
+  white-space: pre;
+  pointer-events: none;
+  font-size: calc(26 * var(--k));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--track-tight);
+  color: var(--white);
+}
+
+.finder__demo-hint,
+.finder__demo-typed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+}
+
+.finder__demo-hint {
+  opacity: 0.4;
+  transition: opacity 300ms linear;
+}
+
+.finder__demo-hint.is-hidden { opacity: 0; }
+
+.finder__demo-typed { transition: opacity 300ms linear; }
+.finder__demo-typed.is-out { opacity: 0; }
+
+.finder__demo-typed .char {
+  opacity: 0;
+  transition: opacity 120ms linear;
+}
+
+.finder__demo-typed .char.is-in { opacity: 1; }
+
+.finder.is-demo .finder__input { opacity: 0; }
+.finder:not(.is-demo) .finder__demo { display: none; }
 
 /* ------------------------------------------------------------------ cta -- */
 /* Centred on the media and held 76 design units off its bottom edge, which is
@@ -1928,9 +2012,8 @@ input { font: inherit; color: inherit; }
 
 /* ==========================================================================
    One-time entrance
-   The background never moves. Only meaningful foreground groups participate,
-   and the two root classes are removed once the sequence completes so no
-   entrance transition remains active afterward.
+   Only meaningful foreground groups participate. The background and original
+   finder demo stay still until this finite sequence completes.
    ========================================================================== */
 html.entrance-pending .brand,
 html.entrance-pending .nav__link,
