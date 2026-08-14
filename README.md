@@ -139,3 +139,15 @@ Only behaviour the design itself represents is implemented, in vanilla JS:
 
 `prefers-reduced-motion: reduce` skips both the entrance and the continuing
 hero motion, rendering the complete panel and hero content immediately.
+
+## Lower-page choreography
+
+The feature and showcase sections reveal once as they enter the viewport. Each
+feature behaves as one product scene: its media establishes the card, then the
+title and supporting copy overlap into place. On desktop, paired cards use a
+small second-card delay; on mobile, each card waits for its own scroll position.
+
+Showcase stories use an editorial sequence: headline first, paired image just
+afterward. Observed targets are disconnected after revealing, so nothing
+replays when scrolling back. Reduced-motion users receive every section in its
+finished state immediately.

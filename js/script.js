@@ -400,3 +400,82 @@
   else responsiveMenu.addListener(syncNavigation);
   syncNavigation();
 }());
+
+/* One-time lower-page choreography. Each feature waits for its own scroll
+   position; showcase headlines trigger their paired figure. Every target is
+   unobserved after revealing, so no animation replays when scrolling back. */
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var features = Array.prototype.slice.call(document.querySelectorAll('.feature'));
+  var titles = Array.prototype.slice.call(document.querySelectorAll('.showcase__title'));
+  var figures = Array.prototype.slice.call(document.querySelectorAll('.showcase__figure'));
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (!features.length && !titles.length) return;
+  if (!('IntersectionObserver' in window) || calm.matches) return;
+
+  var pending = features.length + titles.length;
+  var cleanupTimer = 0;
+
+  function removeMotionListener() {
+    if (calm.removeEventListener) calm.removeEventListener('change', onMotionChange);
+    else calm.removeListener(onMotionChange);
+  }
+
+  function finishWhenComplete() {
+    if (pending > 0) return;
+    window.clearTimeout(cleanupTimer);
+    cleanupTimer = window.setTimeout(function () {
+      root.classList.remove('scroll-reveal-ready');
+      removeMotionListener();
+    }, 1400);
+  }
+
+  function reveal(target) {
+    if (target.classList.contains('is-revealed')) return;
+    target.classList.add('is-revealed');
+
+    var storyIndex = titles.indexOf(target);
+    if (storyIndex !== -1 && figures[storyIndex]) {
+      figures[storyIndex].classList.add('is-revealed');
+    }
+
+    pending -= 1;
+    observer.unobserve(target);
+    finishWhenComplete();
+  }
+
+  function revealAll() {
+    features.forEach(function (feature) { feature.classList.add('is-revealed'); });
+    titles.forEach(function (title, index) {
+      title.classList.add('is-revealed');
+      if (figures[index]) figures[index].classList.add('is-revealed');
+    });
+    pending = 0;
+    observer.disconnect();
+    root.classList.remove('scroll-reveal-ready');
+    removeMotionListener();
+  }
+
+  function onMotionChange(event) {
+    if (event.matches) revealAll();
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) reveal(entry.target);
+    });
+  }, {
+    threshold: 0.16,
+    rootMargin: '0px 0px -10% 0px'
+  });
+
+  root.classList.add('scroll-reveal-ready');
+  features.forEach(function (feature) { observer.observe(feature); });
+  titles.forEach(function (title) { observer.observe(title); });
+
+  if (calm.addEventListener) calm.addEventListener('change', onMotionChange);
+  else calm.addListener(onMotionChange);
+}());
