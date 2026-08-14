@@ -2131,6 +2131,100 @@ html.entrance-playing .hero__lede {
   html.entrance-pending .cta { transform: translateX(-50%) translateY(7px); }
 }
 
+/* ==========================================================================
+   One-time scroll choreography
+   Feature cards reveal as product scenes (media, title, supporting copy).
+   Showcase stories reveal editorially (headline, then image). JavaScript adds
+   the ready class only after the observer is safely initialized, so content
+   remains visible if scripting is unavailable.
+   ========================================================================== */
+.feature,
+.showcase__title,
+.showcase__figure { --scroll-order: 0; }
+
+.feature:nth-child(even),
+.showcase__title--second,
+.showcase__figure--second { --scroll-order: 1; }
+
+html.scroll-reveal-ready .feature .feature__media,
+html.scroll-reveal-ready .feature .feature__title,
+html.scroll-reveal-ready .feature .feature__text,
+html.scroll-reveal-ready .showcase__title,
+html.scroll-reveal-ready .showcase__figure {
+  will-change: opacity, transform, clip-path;
+}
+
+html.scroll-reveal-ready .feature.is-revealed .feature__media {
+  transition:
+    opacity 720ms var(--ease-panel) calc(var(--scroll-order) * 90ms),
+    transform 920ms var(--ease-panel) calc(var(--scroll-order) * 90ms),
+    clip-path 920ms var(--ease-panel) calc(var(--scroll-order) * 90ms);
+}
+
+html.scroll-reveal-ready .feature.is-revealed .feature__title {
+  transition:
+    opacity 560ms var(--ease-panel) calc(150ms + var(--scroll-order) * 90ms),
+    transform 720ms var(--ease-panel) calc(150ms + var(--scroll-order) * 90ms),
+    clip-path 720ms var(--ease-panel) calc(150ms + var(--scroll-order) * 90ms);
+}
+
+html.scroll-reveal-ready .feature.is-revealed .feature__text {
+  transition:
+    opacity 520ms var(--ease-panel) calc(260ms + var(--scroll-order) * 90ms),
+    transform 680ms var(--ease-panel) calc(260ms + var(--scroll-order) * 90ms);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .feature__media {
+  opacity: 0;
+  clip-path: inset(9% 0 0 0 round calc(var(--radius-card) * var(--k)));
+  transform: translateY(calc(18 * var(--k))) scale(0.985);
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .feature__title {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(calc(11 * var(--k)));
+}
+
+html.scroll-reveal-ready .feature:not(.is-revealed) .feature__text {
+  opacity: 0;
+  transform: translateY(calc(9 * var(--k)));
+}
+
+html.scroll-reveal-ready .showcase__title.is-revealed {
+  transition:
+    opacity 620ms var(--ease-panel) calc(var(--scroll-order) * 100ms),
+    transform 820ms var(--ease-panel) calc(var(--scroll-order) * 100ms);
+}
+
+html.scroll-reveal-ready .showcase__figure.is-revealed {
+  transition:
+    opacity 760ms var(--ease-panel) calc(190ms + var(--scroll-order) * 100ms),
+    transform 980ms var(--ease-panel) calc(190ms + var(--scroll-order) * 100ms),
+    clip-path 980ms var(--ease-panel) calc(190ms + var(--scroll-order) * 100ms);
+}
+
+html.scroll-reveal-ready .showcase__title:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(calc(15 * var(--k)));
+}
+
+html.scroll-reveal-ready .showcase__figure:not(.is-revealed) {
+  opacity: 0;
+  clip-path: inset(10% 0 0 0 round calc(var(--radius-card) * var(--k)));
+  transform: translateY(calc(20 * var(--k))) scale(0.985);
+}
+
+@media (max-width: 699px) {
+  html.scroll-reveal-ready .feature:not(.is-revealed) .feature__media {
+    transform: translateY(14px) scale(0.99);
+  }
+
+  html.scroll-reveal-ready .showcase__figure:not(.is-revealed) {
+    transform: translateY(16px) scale(0.99);
+  }
+}
+
 /* Motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2157,4 +2251,15 @@ html.entrance-playing .hero__lede {
 
   html.entrance-pending .finder { transform: translate(-50%, -50%); }
   html.entrance-pending .cta { transform: translateX(-50%); }
+
+  html.scroll-reveal-ready .feature .feature__media,
+  html.scroll-reveal-ready .feature .feature__title,
+  html.scroll-reveal-ready .feature .feature__text,
+  html.scroll-reveal-ready .showcase__title,
+  html.scroll-reveal-ready .showcase__figure {
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+    will-change: auto;
+  }
 }
